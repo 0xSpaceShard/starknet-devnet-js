@@ -14,7 +14,7 @@
         "array-bracket-spacing": ["error", "never"],
         "block-spacing": ["error", "always"],
         "brace-style": ["error", "1tbs"],
-        "comma-dangle": ["error", "always"],
+        "comma-dangle": ["error", "always-multiline"],
         "comma-spacing": [
             "error",
             {
