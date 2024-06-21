@@ -11,12 +11,15 @@
         "build": "tsc -p tsconfig.build.json",
         "test": "mocha -r ts-node/register test/**/*.test.ts",
         "format": "prettier --log-level log --write \"**/*.{ts,js,md,yml,json}\"",
-        "lint": "eslint $(git ls-files '*.ts') --cache --fix"
+        "format-check": "prettier --log-level log \"**/*.{ts,js,md,yml,json}\"",
+        "lint": "eslint $(git ls-files '*.ts') --cache --fix",
+        "lint-check": "eslint $(git ls-files '*.ts') --cache"
     },
     "author": "SpaceShard",
     "license": "MIT",
     "dependencies": {
-        "axios": "^1.7.2"
+        "axios": "^1.7.2",
+        "starknet": "^5.24.3"
     },
     "devDependencies": {
         "@types/chai": "^4.2.22",

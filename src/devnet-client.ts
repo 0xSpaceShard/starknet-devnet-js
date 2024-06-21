@@ -1,14 +1,14 @@
 import axios, { AxiosInstance } from "axios";
+import { Postman } from "./postman";
+import { RpcClient } from "./rpc-client";
+import { BigNumberish } from "./types";
 
-const RPC_URL = "/";
 const HTTP_TIMEOUT = 2000; // ms
 const DEFAULT_DEVNET_URL = "http://localhost:5050";
 
 export type DevnetClientConfig = {
     url?: string;
 };
-
-export type BigNumberish = string | number | bigint;
 
 export type BalanceUnit = "WEI" | "FRI";
 
@@ -21,6 +21,8 @@ export type MintResponse = {
 export class DevnetClient {
     public url: string;
     private httpClient: AxiosInstance;
+    private rpcClient: RpcClient;
+    public postman: Postman;
 
     public constructor(config?: DevnetClientConfig) {
         this.url = config?.url || DEFAULT_DEVNET_URL;
@@ -28,26 +30,8 @@ export class DevnetClient {
             baseURL: this.url,
             timeout: HTTP_TIMEOUT,
         });
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private async sendRpc(method: string, params: any): Promise<any> {
-        const resp = await this.httpClient.post(RPC_URL, {
-            jsonrpc: "2.0",
-            id: "1",
-            method,
-            params,
-        });
-
-        return new Promise((resolve, reject) => {
-            if ("result" in resp.data) {
-                resolve(resp.data["result"]);
-            } else if ("error" in resp.data) {
-                reject(resp.data["error"]);
-            } else {
-                reject(resp.data);
-            }
-        });
+        this.rpcClient = new RpcClient(this.httpClient, this.url);
+        this.postman = new Postman(this.rpcClient);
     }
 
     public async isAlive(): Promise<boolean> {
@@ -66,7 +50,7 @@ export class DevnetClient {
         amount: BigNumberish,
         unit: BalanceUnit = "WEI",
     ): Promise<MintResponse> {
-        const respData = await this.sendRpc("devnet_mint", {
+        const respData = await this.rpcClient.sendRequest("devnet_mint", {
             address,
             amount: amount.toString(), // stringify to ensure serializability
             unit,
