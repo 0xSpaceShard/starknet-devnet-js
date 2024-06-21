@@ -1,0 +1,22 @@
+{
+    "name": "starknet-devnet",
+    "version": "0.0.1",
+    "description": "Starknet Devnet client",
+    "main": "index.js",
+    "scripts": {
+        "build": "rm -rf dist && tsc",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --log-level log --write \"**/*.{ts,js,md,yml,json}\"",
+        "lint": "eslint $(git ls-files '*.ts') --cache --fix"
+    },
+    "author": "SpaceShard",
+    "license": "MIT",
+    "dependencies": {
+        "axios": "^1.7.2",
+        "typescript": "^5.5.2"
+    },
+    "devDependencies": {
+        "eslint": "^8.57.0",
+        "prettier-eslint": "^16.3.0"
+    }
+}

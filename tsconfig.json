@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "target": "ES2022",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "outDir": "dist",
+        "resolveJsonModule": true,
+        "strictNullChecks": false,
+        "declaration": true,
+        "module": "CommonJS",
+        "noImplicitOverride": true,
+        "typeRoots": ["./node_modules/@types"]
+    },
+    "include": ["./src"]
+}
