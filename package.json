@@ -11,7 +11,7 @@
         "build": "tsc -p tsconfig.build.json",
         "test": "mocha -r ts-node/register test/**/*.test.ts",
         "format": "prettier --log-level log --write \"**/*.{ts,js,md,yml,json}\"",
-        "format-check": "prettier --log-level log \"**/*.{ts,js,md,yml,json}\"",
+        "format-check": "prettier --log-level log --check \"**/*.{ts,js,md,yml,json}\"",
         "lint": "eslint $(git ls-files '*.ts') --cache --fix",
         "lint-check": "eslint $(git ls-files '*.ts') --cache"
     },

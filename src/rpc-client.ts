@@ -1,7 +1,10 @@
 import { AxiosInstance } from "axios";
 
 export class RpcClient {
-    public constructor(private httpClient: AxiosInstance, private url: string) {}
+    public constructor(
+        private httpClient: AxiosInstance,
+        private url: string,
+    ) {}
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async sendRequest(method: string, params: unknown = {}): Promise<any> {
