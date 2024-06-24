@@ -1,10 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 import { Postman } from "./postman";
 import { RpcClient } from "./rpc-client";
-import { BigNumberish } from "./types";
 
 const HTTP_TIMEOUT = 2000; // ms
-const DEFAULT_DEVNET_URL = "http://localhost:5050";
+const DEFAULT_DEVNET_URL = "http://127.0.0.1:5050";
 
 export type DevnetClientConfig = {
     url?: string;
@@ -45,14 +44,18 @@ export class DevnetClient {
         });
     }
 
+    public async restart(): Promise<void> {
+        await this.rpcClient.sendRequest("devnet_restart");
+    }
+
     public async mint(
         address: string,
-        amount: BigNumberish,
+        amount: number,
         unit: BalanceUnit = "WEI",
     ): Promise<MintResponse> {
         const respData = await this.rpcClient.sendRequest("devnet_mint", {
             address,
-            amount: amount.toString(), // stringify to ensure serializability
+            amount,
             unit,
         });
 
