@@ -194,31 +194,4 @@ describe("Postman", function () {
             initialBalance + incrementAmount - withdrawAmount,
         );
     });
-
-    // it("should estimate message fee", async () => {
-    //     const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
-    //     const estimatedMessageFee = await l2Contract.estimateMessageFee("deposit", {
-    //         from_address: L1_CONTRACT_ADDRESS,
-    //         amount: 123,
-    //         user,
-    //     });
-    //     expectFeeEstimationStructure(estimatedMessageFee);
-    // });
-
-    // it("should fail to estimate message fee with a non @l1_handler function", async () => {
-    //     try {
-    //         const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
-    //         await l2Contract.estimateMessageFee("withdraw", {
-    //             from_address: L1_CONTRACT_ADDRESS,
-    //             amount: 123,
-    //             user,
-    //         });
-    //         expect.fail("Should have failed on the previous line");
-    //     } catch (err) {
-    //         expectStarknetPluginErrorContain(
-    //             err,
-    //             'Cannot estimate message fee on "withdraw" - not an @l1_handler',
-    //         );
-    //     }
-    // });
 });
