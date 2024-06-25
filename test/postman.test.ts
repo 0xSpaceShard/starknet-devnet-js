@@ -9,9 +9,14 @@ const HEX_REGEX = /^0x[0-9A-Fa-f]+/;
 describe("Postman", function () {
     this.timeout(60_000); // ms
 
+    /** Assumes there is a running Devnet instance. */
     const devnetClient = new DevnetClient();
     const l2Provider = new starknet.RpcProvider({ nodeUrl: devnetClient.url });
+
     const L1_URL = "http://127.0.0.1:8545";
+    /** Assumes there is an L1 provider, e.g. anvil:
+     * https://github.com/foundry-rs/foundry/tree/master/crates/anvil
+     */
     const l1Provider = new ethers.JsonRpcProvider(L1_URL);
 
     const user = 1n;

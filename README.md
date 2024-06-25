@@ -5,11 +5,22 @@ Using this JS client, you can interact with [Starknet Devnet](https://github.com
 # Installation
 
 ```
-$ npm i starknet-devnet-js
+$ npm i starknet-devnet
 ```
 
 # Usage
 
-The main export of this package is `DevnetClient`. Use its `postman` property to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman).
+The main export of this package is `DevnetClient`. Assuming you have a [running Devnet](https://0xspaceshard.github.io/starknet-devnet-rs/docs/category/running), simply import `DevnetClient` in your JS/TS program and interact with the Devnet instance:
+
+```typescript
+import { DevnetClient } from "starknet-devnet";
+
+async function helloDevnet() {
+    const devnet = new DevnetClient();
+    console.log(await devnet.isAlive()); // true
+}
+```
+
+Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetClient` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman).
 
 See the `test` directory for usage examples.
