@@ -32,6 +32,7 @@ describe("Postman", function () {
     }
 
     before(async function () {
+        await devnetClient.restart();
         l2Account = await getPredeployedL2Account();
 
         const l2Sierra = getContractArtifact("test/data/cairo_1_l1l2.sierra");
@@ -122,15 +123,13 @@ describe("Postman", function () {
         await l1L2Example.withdraw(l2Contract.address, user, 10);
         expect(await l1L2Example.userBalances(user)).to.equal(10n);
 
-        // Deposit to the L2 contract, L1 balance should be decreased by 2.
+        // Deposit to the L2 contract, L1 balance should be decreased and L2 balance increased by 2.
         const depositAmount = 2n;
-        const l1Fee = 1n; // Sets paid_fee_on_l1
+        const l1Fee = 1n;
         await l1L2Example.deposit(l2Contract.address, user, depositAmount, {
             value: l1Fee,
         });
         expect(await l1L2Example.userBalances(user)).to.equal(8n);
-
-        // Check if L2 balance increased after the deposit
         expect(await l2Contract.get_balance(user)).to.equal(90n);
 
         // Flushing the L1 messages so that they can be consumed by the L2.
@@ -143,43 +142,58 @@ describe("Postman", function () {
         expectHexEquality(flushL1Messages[0].l2_contract_address, l2Contract.address);
         expect(BigInt(flushL1Messages[0].paid_fee_on_l1)).to.equal(l1Fee);
         expect(flushL1Messages[0].nonce).to.match(HEX_REGEX);
+        expect(flushL1Messages[0].entry_point_selector).to.equal(
+            starknet.selector.getSelector("deposit"),
+        );
         expect(flushL1Messages[0].payload.map(BigInt)).to.deep.equal([user, depositAmount]);
 
         expect(await l2Contract.get_balance(user)).to.equal(92n);
     });
 
-    // it("should mock l1 to l2 tx and vice versa", async () => {
-    //     const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
-    //     const { transaction_hash } = await starknet.devnet.sendMessageToL2(
-    //         l2Contract.address,
-    //         "deposit",
-    //         L1_CONTRACT_ADDRESS,
-    //         [1, 1],
-    //         0,
-    //         1, // Paid fee on l1
-    //     );
+    it("should mock messaging from L1 to L2", async () => {
+        const initialBalance = await l2Contract.get_balance(user);
+        const l1Address = await mockStarknetMessaging.getAddress();
+        const depositAmount = 1n;
+        const { transaction_hash } = await devnetClient.postman.sendMessageToL2(
+            l2Contract.address,
+            "deposit",
+            l1Address,
+            [user, depositAmount],
+            0, // nonce
+            1, // paid fee on l1
+        );
+        expect(transaction_hash).to.match(HEX_REGEX);
 
-    //     expect(transaction_hash.startsWith("0x")).to.be.true;
-    //     const tx = await starknet.getTransaction(transaction_hash);
-    //     expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
-    //     await l2Account.invoke(l2Contract, "increase_balance", {
-    //         user,
-    //         amount: 10000000,
-    //     });
+        const tx = await l2Provider.getTransactionReceipt(transaction_hash);
+        expect(tx.isSuccess()).to.be.true;
 
-    //     await l2Account.invoke(l2Contract, "withdraw", {
-    //         user,
-    //         amount: 10,
-    //         L1_CONTRACT_ADDRESS,
-    //     });
+        expect(await l2Contract.get_balance(user)).to.equal(initialBalance + depositAmount);
+    });
 
-    //     const { message_hash } = await starknet.devnet.consumeMessageFromL2(
-    //         l2Contract.address,
-    //         L1_CONTRACT_ADDRESS,
-    //         [0, 1, 10],
-    //     );
-    //     expect(message_hash.startsWith("0x")).to.be.true;
-    // });
+    it("should mock messaging from L2 to L1", async () => {
+        const initialBalance = await l2Contract.get_balance(user);
+        const l1Address = await mockStarknetMessaging.getAddress();
+
+        // create balance on L2, withdraw a part of it
+        const incrementAmount = 10000000n;
+        await l2Contract.increase_balance(user, incrementAmount);
+
+        const withdrawAmount = 10n;
+        await l2Provider.waitForTransaction(
+            (await l2Contract.withdraw(user, withdrawAmount, l1Address)).transaction_hash,
+        );
+
+        const { message_hash } = await devnetClient.postman.consumeMessageFromL2(
+            l2Contract.address,
+            l1Address,
+            [0, user, withdrawAmount],
+        );
+        expect(message_hash).to.match(HEX_REGEX);
+
+        expect(await l2Contract.get_balance(user)).to.equal(
+            initialBalance + incrementAmount - withdrawAmount,
+        );
+    });
 
     // it("should estimate message fee", async () => {
     //     const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
@@ -207,6 +221,4 @@ describe("Postman", function () {
     //         );
     //     }
     // });
-
-    // it("should estimate message fee", )
 });

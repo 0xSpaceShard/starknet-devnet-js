@@ -83,34 +83,25 @@ export class Postman {
         nonce: BigNumberish,
         paidFeeOnL1: BigNumberish,
     ): Promise<L1ToL2MockTxResponse> {
-        const body = {
+        return await this.rpcClient.sendRequest("devnet_postmanSendMessageToL2", {
             l2_contract_address: l2ContractAddress,
             entry_point_selector: selector.getSelectorFromName(functionName),
             l1_contract_address: l1ContractAddress,
-            payload: payload.map((item) => numericToHexString(item)),
+            payload: payload.map(numericToHexString),
             nonce: numericToHexString(nonce),
             paid_fee_on_l1: numericToHexString(paidFeeOnL1),
-        };
-
-        const response = await this.rpcClient.sendRequest("devnet_postmanSendMessageToL2", body);
-        return response;
+        });
     }
 
     public async consumeMessageFromL2(
-        l2ContractAddress: string,
-        l1ContractAddress: string,
+        fromAddress: string,
+        toAddress: string,
         payload: BigNumberish[],
     ): Promise<L2ToL1MockTxResponse> {
-        const body = {
-            l2_contract_address: l2ContractAddress,
-            l1_contract_address: l1ContractAddress,
-            payload: payload.map((item) => numericToHexString(item)),
-        };
-
-        const response = await this.rpcClient.sendRequest(
-            "devnet_postmanConsumeMessageFromL2",
-            body,
-        );
-        return response;
+        return await this.rpcClient.sendRequest("devnet_postmanConsumeMessageFromL2", {
+            from_address: fromAddress,
+            to_address: toAddress,
+            payload: payload.map(numericToHexString),
+        });
     }
 }
