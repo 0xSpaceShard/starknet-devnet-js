@@ -1,12 +1,12 @@
 import axios, { AxiosInstance } from "axios";
 import { Postman } from "./postman";
-import { RpcClient } from "./rpc-client";
+import { RpcProvider } from "./rpc-provider";
 import { PredeployedAccount } from "./types";
 
 const DEFAULT_HTTP_TIMEOUT = 10_000; // ms
 const DEFAULT_DEVNET_URL = "http://127.0.0.1:5050";
 
-export type DevnetClientConfig = {
+export type DevnetProviderConfig = {
     url?: string;
     timeout?: number;
 };
@@ -19,22 +19,22 @@ export type MintResponse = {
     tx_hash: string;
 };
 
-export class DevnetClient {
+export class DevnetProvider {
     public url: string;
-    private httpClient: AxiosInstance;
-    private rpcClient: RpcClient;
+    private httpProvider: AxiosInstance;
+    private rpcProvider: RpcProvider;
 
     /** Handles L1-L2 communication. */
     public postman: Postman;
 
-    public constructor(config?: DevnetClientConfig) {
+    public constructor(config?: DevnetProviderConfig) {
         this.url = config?.url || DEFAULT_DEVNET_URL;
-        this.httpClient = axios.create({
+        this.httpProvider = axios.create({
             baseURL: this.url,
             timeout: config?.timeout ?? DEFAULT_HTTP_TIMEOUT,
         });
-        this.rpcClient = new RpcClient(this.httpClient, this.url);
-        this.postman = new Postman(this.rpcClient);
+        this.rpcProvider = new RpcProvider(this.httpProvider, this.url);
+        this.postman = new Postman(this.rpcProvider);
     }
 
     /**
@@ -42,7 +42,7 @@ export class DevnetClient {
      */
     public async isAlive(): Promise<boolean> {
         return new Promise((resolve, _) => {
-            this.httpClient
+            this.httpProvider
                 .get("/is_alive")
                 .then((resp) => {
                     resolve(resp.status === axios.HttpStatusCode.Ok);
@@ -56,7 +56,7 @@ export class DevnetClient {
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#restarting
      */
     public async restart(): Promise<void> {
-        await this.rpcClient.sendRequest("devnet_restart");
+        await this.rpcProvider.sendRequest("devnet_restart");
     }
 
     /**
@@ -71,7 +71,7 @@ export class DevnetClient {
         amount: number,
         unit: BalanceUnit = "WEI",
     ): Promise<MintResponse> {
-        const respData = await this.rpcClient.sendRequest("devnet_mint", {
+        const respData = await this.rpcProvider.sendRequest("devnet_mint", {
             address,
             amount,
             unit,
@@ -89,6 +89,6 @@ export class DevnetClient {
      * @returns a list of containing information on predeployed accounts. Load an account using e.g. starknet.js.
      */
     public async getPredeployedAccounts(): Promise<Array<PredeployedAccount>> {
-        return await this.rpcClient.sendRequest("devnet_getPredeployedAccounts");
+        return await this.rpcProvider.sendRequest("devnet_getPredeployedAccounts");
     }
 }

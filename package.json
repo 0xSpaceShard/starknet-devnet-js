@@ -1,7 +1,7 @@
 {
     "name": "starknet-devnet",
     "version": "0.0.1",
-    "description": "Starknet Devnet client",
+    "description": "Starknet Devnet provider",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [

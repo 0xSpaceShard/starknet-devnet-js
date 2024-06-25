@@ -1,1 +1,1 @@
-export * from "./devnet-client";
+export * from "./devnet-provider";

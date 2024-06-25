@@ -1,4 +1,4 @@
-import { RpcClient } from "./rpc-client";
+import { RpcProvider } from "./rpc-provider";
 import { BigNumberish } from "./types";
 
 function numericToHexString(numeric: BigNumberish): string {
@@ -58,13 +58,13 @@ export interface L2ToL1MockTxResponse {
  * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman
  */
 export class Postman {
-    public constructor(private rpcClient: RpcClient) {}
+    public constructor(private rpcProvider: RpcProvider) {}
 
     /**
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#flush
      */
     public async flush(dryRun = false): Promise<FlushResponse> {
-        return this.rpcClient.sendRequest("devnet_postmanFlush", { dry_run: dryRun });
+        return this.rpcProvider.sendRequest("devnet_postmanFlush", { dry_run: dryRun });
     }
 
     /**
@@ -75,7 +75,7 @@ export class Postman {
         address?: string,
         networkId?: string,
     ): Promise<LoadL1MessagingContractResponse> {
-        const response = await this.rpcClient.sendRequest("devnet_postmanLoad", {
+        const response = await this.rpcProvider.sendRequest("devnet_postmanLoad", {
             network_id: networkId,
             address,
             network_url: networkUrl,
@@ -94,7 +94,7 @@ export class Postman {
         nonce: BigNumberish,
         paidFeeOnL1: BigNumberish,
     ): Promise<L1ToL2MockTxResponse> {
-        return await this.rpcClient.sendRequest("devnet_postmanSendMessageToL2", {
+        return await this.rpcProvider.sendRequest("devnet_postmanSendMessageToL2", {
             l2_contract_address: l2ContractAddress,
             entry_point_selector: entryPointSelector,
             l1_contract_address: l1ContractAddress,
@@ -112,7 +112,7 @@ export class Postman {
         toAddress: string,
         payload: BigNumberish[],
     ): Promise<L2ToL1MockTxResponse> {
-        return await this.rpcClient.sendRequest("devnet_postmanConsumeMessageFromL2", {
+        return await this.rpcProvider.sendRequest("devnet_postmanConsumeMessageFromL2", {
             from_address: fromAddress,
             to_address: toAddress,
             payload: payload.map(numericToHexString),

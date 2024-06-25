@@ -1,14 +1,14 @@
 import { AxiosInstance } from "axios";
 
-export class RpcClient {
+export class RpcProvider {
     public constructor(
-        private httpClient: AxiosInstance,
+        private httpProvider: AxiosInstance,
         private url: string,
     ) {}
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async sendRequest(method: string, params: unknown = {}): Promise<any> {
-        const resp = await this.httpClient.post(this.url, {
+        const resp = await this.httpProvider.post(this.url, {
             jsonrpc: "2.0",
             id: "1",
             method,

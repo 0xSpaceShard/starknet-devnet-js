@@ -1,5 +1,5 @@
 import * as starknet from "starknet";
-import { DevnetClient } from "../src/devnet-client";
+import { DevnetProvider } from "../src/devnet-provider";
 import * as ethers from "ethers";
 import { expect } from "chai";
 import { expectHexEquality, getContractArtifact } from "./util";
@@ -10,8 +10,8 @@ describe("Postman", function () {
     this.timeout(60_000); // ms
 
     /** Assumes there is a running Devnet instance. */
-    const devnetClient = new DevnetClient();
-    const l2Provider = new starknet.RpcProvider({ nodeUrl: devnetClient.url });
+    const devnetProvider = new DevnetProvider();
+    const l2Provider = new starknet.RpcProvider({ nodeUrl: devnetProvider.url });
 
     const L1_URL = "http://127.0.0.1:8545";
     /** Assumes there is an L1 provider, e.g. anvil:
@@ -27,7 +27,7 @@ describe("Postman", function () {
     let l1L2Example: ethers.Contract;
 
     async function getPredeployedL2Account() {
-        const predeployedAccountData = (await devnetClient.getPredeployedAccounts())[0];
+        const predeployedAccountData = (await devnetProvider.getPredeployedAccounts())[0];
 
         return new starknet.Account(
             l2Provider,
@@ -37,7 +37,7 @@ describe("Postman", function () {
     }
 
     before(async function () {
-        await devnetClient.restart();
+        await devnetProvider.restart();
         l2Account = await getPredeployedL2Account();
 
         const l2Sierra = getContractArtifact("test/data/cairo_1_l1l2.sierra");
@@ -85,7 +85,7 @@ describe("Postman", function () {
 
     it("should deploy the messaging contract", async () => {
         const { messaging_contract_address: deployedTo } =
-            await devnetClient.postman.loadL1MessagingContract(L1_URL);
+            await devnetProvider.postman.loadL1MessagingContract(L1_URL);
 
         expect(deployedTo).to.match(HEX_REGEX);
     });
@@ -93,7 +93,7 @@ describe("Postman", function () {
     it("should load the already deployed contract if the address is provided", async () => {
         const messagingAddress = await mockStarknetMessaging.getAddress();
         const { messaging_contract_address: loadedFrom } =
-            await devnetClient.postman.loadL1MessagingContract(L1_URL, messagingAddress);
+            await devnetProvider.postman.loadL1MessagingContract(L1_URL, messagingAddress);
 
         expectHexEquality(loadedFrom, messagingAddress);
     });
@@ -101,7 +101,7 @@ describe("Postman", function () {
     it("should exchange messages between L1 and L2", async () => {
         // Load the mock messaging contract.
         const messagingAddress = await mockStarknetMessaging.getAddress();
-        await devnetClient.postman.loadL1MessagingContract(L1_URL, messagingAddress);
+        await devnetProvider.postman.loadL1MessagingContract(L1_URL, messagingAddress);
 
         // Increase the L2 contract balance to 100 and withdraw 10 from it.
         await l2Provider.waitForTransaction(
@@ -115,7 +115,7 @@ describe("Postman", function () {
         expect(await l2Contract.get_balance(user)).to.equal(90n);
 
         // Flushing the L2 messages so that they can be consumed by the L1.
-        const flushL2Response = await devnetClient.postman.flush();
+        const flushL2Response = await devnetProvider.postman.flush();
         expect(flushL2Response.messages_to_l2).to.be.empty;
         const flushL2Messages = flushL2Response.messages_to_l1;
 
@@ -138,7 +138,7 @@ describe("Postman", function () {
         expect(await l2Contract.get_balance(user)).to.equal(90n);
 
         // Flushing the L1 messages so that they can be consumed by the L2.
-        const flushL1Response = await devnetClient.postman.flush();
+        const flushL1Response = await devnetProvider.postman.flush();
         const flushL1Messages = flushL1Response.messages_to_l2;
         expect(flushL1Messages).to.have.a.lengthOf(1);
         expect(flushL1Response.messages_to_l1).to.be.empty;
@@ -159,7 +159,7 @@ describe("Postman", function () {
         const initialBalance = await l2Contract.get_balance(user);
         const l1Address = await mockStarknetMessaging.getAddress();
         const depositAmount = 1n;
-        const { transaction_hash } = await devnetClient.postman.sendMessageToL2(
+        const { transaction_hash } = await devnetProvider.postman.sendMessageToL2(
             l2Contract.address,
             starknet.selector.getSelector("deposit"),
             l1Address,
@@ -188,7 +188,7 @@ describe("Postman", function () {
             (await l2Contract.withdraw(user, withdrawAmount, l1Address)).transaction_hash,
         );
 
-        const { message_hash } = await devnetClient.postman.consumeMessageFromL2(
+        const { message_hash } = await devnetProvider.postman.consumeMessageFromL2(
             l2Contract.address,
             l1Address,
             [0, user, withdrawAmount],
