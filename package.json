@@ -17,6 +17,17 @@
         "lint-check": "eslint $(git ls-files '*.ts') --cache"
     },
     "author": "SpaceShard",
+    "repository": "github:0xSpaceShard/starknet-devnet-js",
+    "keywords": [
+        "starknet",
+        "devnet",
+        "provider",
+        "starkware",
+        "l2",
+        "l1-l2",
+        "zk",
+        "json-rpc"
+    ],
     "license": "MIT",
     "dependencies": {
         "axios": "^1.7.2"

@@ -23,4 +23,8 @@ async function helloDevnet() {
 
 Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetClient` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman).
 
-See the `test` directory for usage examples.
+See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for usage examples.
+
+# TODO
+
+More functionality coming soon.
