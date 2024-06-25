@@ -23,6 +23,8 @@ export class DevnetClient {
     public url: string;
     private httpClient: AxiosInstance;
     private rpcClient: RpcClient;
+
+    /** Handles L1-L2 communication. */
     public postman: Postman;
 
     public constructor(config?: DevnetClientConfig) {
@@ -35,6 +37,9 @@ export class DevnetClient {
         this.postman = new Postman(this.rpcClient);
     }
 
+    /**
+     * @returns `true` if the underlying Devnet instance is responsive; `false` otherwise
+     */
     public async isAlive(): Promise<boolean> {
         return new Promise((resolve, _) => {
             this.httpClient
@@ -46,10 +51,21 @@ export class DevnetClient {
         });
     }
 
+    /**
+     * Restart the state of the underlying Devnet instance.
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#restarting
+     */
     public async restart(): Promise<void> {
         await this.rpcClient.sendRequest("devnet_restart");
     }
 
+    /**
+     * Generate funds at the provided address. For return spec and more info, see
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#mint-token---local-faucet
+     * @param address the account address to receive funds
+     * @param amount how much to mint
+     * @param unit specifier of the currency unit
+     */
     public async mint(
         address: string,
         amount: number,
@@ -68,6 +84,10 @@ export class DevnetClient {
         };
     }
 
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/predeployed#how-to-get-predeployment-info
+     * @returns a list of containing information on predeployed accounts. Load an account using e.g. starknet.js.
+     */
     public async getPredeployedAccounts(): Promise<Array<PredeployedAccount>> {
         return await this.rpcClient.sendRequest("devnet_getPredeployedAccounts");
     }

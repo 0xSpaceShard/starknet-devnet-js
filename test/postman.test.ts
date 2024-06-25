@@ -156,7 +156,7 @@ describe("Postman", function () {
         const depositAmount = 1n;
         const { transaction_hash } = await devnetClient.postman.sendMessageToL2(
             l2Contract.address,
-            "deposit",
+            starknet.selector.getSelector("deposit"),
             l1Address,
             [user, depositAmount],
             0, // nonce

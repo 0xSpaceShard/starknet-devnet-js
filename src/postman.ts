@@ -1,4 +1,3 @@
-import { selector } from "starknet";
 import { RpcClient } from "./rpc-client";
 import { BigNumberish } from "./types";
 
@@ -55,13 +54,22 @@ export interface L2ToL1MockTxResponse {
     message_hash: string;
 }
 
+/**
+ * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman
+ */
 export class Postman {
     public constructor(private rpcClient: RpcClient) {}
 
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#flush
+     */
     public async flush(dryRun = false): Promise<FlushResponse> {
         return this.rpcClient.sendRequest("devnet_postmanFlush", { dry_run: dryRun });
     }
 
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#load
+     */
     public async loadL1MessagingContract(
         networkUrl: string,
         address?: string,
@@ -75,9 +83,12 @@ export class Postman {
         return response;
     }
 
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#mock-transactions
+     */
     public async sendMessageToL2(
         l2ContractAddress: string,
-        functionName: string,
+        entryPointSelector: string,
         l1ContractAddress: string,
         payload: BigNumberish[],
         nonce: BigNumberish,
@@ -85,7 +96,7 @@ export class Postman {
     ): Promise<L1ToL2MockTxResponse> {
         return await this.rpcClient.sendRequest("devnet_postmanSendMessageToL2", {
             l2_contract_address: l2ContractAddress,
-            entry_point_selector: selector.getSelectorFromName(functionName),
+            entry_point_selector: entryPointSelector,
             l1_contract_address: l1ContractAddress,
             payload: payload.map(numericToHexString),
             nonce: numericToHexString(nonce),
@@ -93,6 +104,9 @@ export class Postman {
         });
     }
 
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#l2-l1
+     */
     public async consumeMessageFromL2(
         fromAddress: string,
         toAddress: string,
