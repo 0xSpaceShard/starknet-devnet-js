@@ -3,6 +3,7 @@ import { DevnetClient, BalanceUnit, MintResponse } from "../src/devnet-client";
 
 describe("DevnetClient", function () {
     const devnetClient = new DevnetClient();
+
     beforeEach("restart the state", async function () {
         await devnetClient.restart();
     });
@@ -11,6 +12,11 @@ describe("DevnetClient", function () {
         const devnetClient = new DevnetClient();
         const isAlive = await devnetClient.isAlive();
         expect(isAlive).to.be.true;
+    });
+
+    it("should have predeployed accounts", async function () {
+        const accounts = await devnetClient.getPredeployedAccounts();
+        expect(accounts).length.to.be.greaterThan(0);
     });
 
     function assertMintResp(resp: MintResponse, expectedAmount: number, expectedUnit: BalanceUnit) {

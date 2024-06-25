@@ -1,12 +1,14 @@
 import axios, { AxiosInstance } from "axios";
 import { Postman } from "./postman";
 import { RpcClient } from "./rpc-client";
+import { PredeployedAccount } from "./types";
 
-const HTTP_TIMEOUT = 2000; // ms
+const DEFAULT_HTTP_TIMEOUT = 10_000; // ms
 const DEFAULT_DEVNET_URL = "http://127.0.0.1:5050";
 
 export type DevnetClientConfig = {
     url?: string;
+    timeout?: number;
 };
 
 export type BalanceUnit = "WEI" | "FRI";
@@ -27,7 +29,7 @@ export class DevnetClient {
         this.url = config?.url || DEFAULT_DEVNET_URL;
         this.httpClient = axios.create({
             baseURL: this.url,
-            timeout: HTTP_TIMEOUT,
+            timeout: config?.timeout ?? DEFAULT_HTTP_TIMEOUT,
         });
         this.rpcClient = new RpcClient(this.httpClient, this.url);
         this.postman = new Postman(this.rpcClient);
@@ -64,5 +66,9 @@ export class DevnetClient {
             unit: respData.unit,
             tx_hash: respData.tx_hash,
         };
+    }
+
+    public async getPredeployedAccounts(): Promise<Array<PredeployedAccount>> {
+        return await this.rpcClient.sendRequest("devnet_getPredeployedAccounts");
     }
 }

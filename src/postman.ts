@@ -38,8 +38,7 @@ export interface FlushResponse {
 }
 
 export interface LoadL1MessagingContractResponse {
-    address: string;
-    l1_provider: string;
+    messaging_contract_address: string;
 }
 
 export interface L1ToL2MockTxRequest {
@@ -77,7 +76,7 @@ export class Postman {
         address?: string,
         networkId?: string,
     ): Promise<LoadL1MessagingContractResponse> {
-        const response = await this.rpcClient.sendRequest("devnet_postmanLoadL1MessagingContract", {
+        const response = await this.rpcClient.sendRequest("devnet_postmanLoad", {
             network_id: networkId,
             address,
             network_url: networkUrl,
