@@ -7,20 +7,12 @@ function numericToHexString(numeric: BigNumberish): string {
 }
 
 export interface L1ToL2Message {
-    address: string;
-    args: {
-        from_address: string;
-        nonce: number;
-        payload: Array<number>;
-        selector: string;
-        to_address: string;
-    };
-    block_hash: string;
-    block_number: number;
-    event: string;
-    log_index: number;
-    transaction_hash: string;
-    transaction_index: number;
+    l2_contract_address: string;
+    entry_point_selector: string;
+    l1_contract_address: string;
+    payload: Array<string>;
+    paid_fee_on_l1: string;
+    nonce: string;
 }
 
 export interface L2ToL1Message {
@@ -30,11 +22,10 @@ export interface L2ToL1Message {
 }
 
 export interface FlushResponse {
+    messages_to_l1: Array<L2ToL1Message>;
+    messages_to_l2: Array<L1ToL2Message>;
+    generated_l2_transactions: Array<string>;
     l1_provider: string;
-    consumed_messages: {
-        from_l1: Array<L1ToL2Message>;
-        from_l2: Array<L2ToL1Message>;
-    };
 }
 
 export interface LoadL1MessagingContractResponse {
