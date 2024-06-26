@@ -9,7 +9,6 @@ describe("DevnetProvider", function () {
     });
 
     it("should have a healthcheck endpoint", async function () {
-        const devnetProvider = new DevnetProvider();
         const isAlive = await devnetProvider.isAlive();
         expect(isAlive).to.be.true;
     });
