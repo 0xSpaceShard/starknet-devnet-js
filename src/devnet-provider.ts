@@ -19,6 +19,14 @@ export type MintResponse = {
     tx_hash: string;
 };
 
+export interface NewBlockResponse {
+    block_hash: string;
+}
+
+export interface AbortedBlocksResponse {
+    aborted: Array<string>;
+}
+
 export class DevnetProvider {
     public url: string;
     private httpProvider: AxiosInstance;
@@ -90,5 +98,23 @@ export class DevnetProvider {
      */
     public async getPredeployedAccounts(): Promise<Array<PredeployedAccount>> {
         return await this.rpcProvider.sendRequest("devnet_getPredeployedAccounts");
+    }
+
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/blocks
+     * @returns the block hash of the newly created block
+     */
+    public async createBlock(): Promise<NewBlockResponse> {
+        return await this.rpcProvider.sendRequest("devnet_createBlock");
+    }
+
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/blocks
+     * @returns hash values of aborted blocks
+     */
+    public async abortBlocks(startingBlockHash: string): Promise<AbortedBlocksResponse> {
+        return await this.rpcProvider.sendRequest("devnet_abortBlocks", {
+            starting_block_hash: startingBlockHash,
+        });
     }
 }
