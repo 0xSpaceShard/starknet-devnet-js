@@ -6,8 +6,8 @@ version: 2.1
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
     build-and-test:
-        docker:
-            - image: cimg/node:20.10.0
+        machine:
+            image: ubuntu-2204:2024.01.2
         resource_class: xlarge
         steps:
             - checkout
