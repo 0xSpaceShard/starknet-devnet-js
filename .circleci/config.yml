@@ -30,19 +30,11 @@ jobs:
                   command: npm run lint-check
             - run:
                   name: Spawn Devnet
-                  command: |
-                      echo "preparing to spawn devnet"
-                      docker run -d -p 127.0.0.1:5050:5050 --name devnet shardlabs/starknet-devnet-rs:0.1.1 --state-archive-capacity full
-                      echo "sleeping..."
-                      sleep 3
-                      curl localhost:5050/is_alive
-                      echo "check done"
+                  command: docker run -d --network host --name devnet shardlabs/starknet-devnet-rs:0.1.1 --state-archive-capacity full
 
             - run:
                   name: Spawn Anvil
-                  command: |
-                      docker run -d -p 127.0.0.1:8545:8545 --name anvil ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
-                      curl -X POST 127.0.0.1:8545 -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":67}'
+                  command: docker run -d --network host --name anvil ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
             - run:
                   name: Test
                   command: npm run test
