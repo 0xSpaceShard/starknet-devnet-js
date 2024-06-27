@@ -12,10 +12,13 @@ jobs:
         steps:
             - checkout
             - run:
+                  name: Versions
+                  command: |
+                      echo "node: $(node --version)"
+                      echo "npm: $(npm --version)"
+            - run:
                   name: Install
                   command: npm ci
-            - setup_remote_docker:
-                  version: docker23
             - run:
                   name: Build
                   command: npm run build
