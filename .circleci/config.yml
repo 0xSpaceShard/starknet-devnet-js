@@ -30,11 +30,12 @@ jobs:
                   command: npm run lint-check
             - run:
                   name: Spawn Devnet
-                  command: docker run -d --network host --name devnet shardlabs/starknet-devnet-rs:0.1.1 --state-archive-capacity full
-
+                  command: docker run -d --network host --name devnet \
+                      shardlabs/starknet-devnet-rs:0.1.1 --state-archive-capacity full
             - run:
                   name: Spawn Anvil
-                  command: docker run -d --network host --name anvil ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
+                  command: docker run -d --network host --name anvil \
+                      ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
             - run:
                   name: Test
                   command: npm run test
