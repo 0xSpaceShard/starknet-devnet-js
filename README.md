@@ -10,9 +10,20 @@ Using this JavaScript/TypeScript library, you can interact with [Starknet Devnet
 $ npm i starknet-devnet
 ```
 
-# Supported Devnet version
+# Compatibility
 
-This library is compatible with Devnet versions starting from commit `81ed1109ce12283e0d18c72f80131e3b89df4efa`. Use this and later versions of Devnet by [installing from source](https://0xspaceshard.github.io/starknet-devnet-rs/docs/running/install#run-from-source) or [running with Docker](https://0xspaceshard.github.io/starknet-devnet-rs/docs/running/docker/).
+This library is compatible with Devnet versions starting with `v0.1.1`. More functionality is being added while you are reading this:
+
+## TODO (missing functionality)
+
+-   [ ] account impersonation
+    -   devnet_impersonateAccount
+    -   devnet_stopImpesonatingAccount
+    -   devnet_autoImpersonate
+    -   devnet_stopAutoImpersonate
+-   [ ] dumping and loading
+    -   devnet_dump
+    -   devnet_load
 
 # Usage
 
@@ -30,7 +41,3 @@ async function helloDevnet() {
 Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman).
 
 See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for usage examples.
-
-# TODO
-
-More functionality coming soon.
