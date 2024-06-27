@@ -42,7 +42,7 @@ jobs:
                   name: Spawn Anvil
                   command: |
                       docker run -d -p 127.0.0.1:8545:8545 --name anvil ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
-                      curl 127.0.0.1:8545 --json '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":67}'
+                      curl -X POST 127.0.0.1:8545 -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":67}'
             - run:
                   name: Test
                   command: npm run test
