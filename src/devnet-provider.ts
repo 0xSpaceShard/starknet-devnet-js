@@ -27,6 +27,16 @@ export interface AbortedBlocksResponse {
     aborted: Array<string>;
 }
 
+export interface SetTimeResponse {
+    time: number;
+    block_hash?: string;
+}
+
+export interface IncreaseTimeResponse {
+    time: number;
+    block_hash: string;
+}
+
 export class DevnetProvider {
     public url: string;
     private httpProvider: AxiosInstance;
@@ -115,6 +125,28 @@ export class DevnetProvider {
     public async abortBlocks(startingBlockHash: string): Promise<AbortedBlocksResponse> {
         return await this.rpcProvider.sendRequest("devnet_abortBlocks", {
             starting_block_hash: startingBlockHash,
+        });
+    }
+
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/next/starknet-time#set-time
+     * @returns the new time in unix seconds and, if block creation requested, the hash of the created block
+     */
+    public async setTime(time: number, generateBlock = false): Promise<SetTimeResponse> {
+        return await this.rpcProvider.sendRequest("devnet_setTime", {
+            time,
+            generate_block: generateBlock,
+        });
+    }
+
+    /**
+     * Increase the time by the provided `increment` seconds.
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/next/starknet-time#increase-time
+     * @returns the new time in unix seconds
+     */
+    public async increaseTime(increment: number): Promise<IncreaseTimeResponse> {
+        return await this.rpcProvider.sendRequest("devnet_increaseTime", {
+            time: increment,
         });
     }
 }

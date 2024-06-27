@@ -85,4 +85,42 @@ describe("DevnetProvider", function () {
             }
         });
     });
+
+    describe("time manipulation", function () {
+        it("should set time after manually generating a block", async function () {
+            const originalBlock = await starknetProvider.getBlock("latest");
+
+            const futureTime = originalBlock.timestamp * 2;
+            const { block_hash: blockHash } = await devnetProvider.setTime(futureTime);
+
+            // since block generation was not requested as part of time setting
+            expect(blockHash).to.be.null;
+
+            const { block_hash: newBlockHash } = await devnetProvider.createBlock();
+            const newBlock = await starknetProvider.getBlockWithTxHashes(newBlockHash);
+            expect(newBlock.timestamp).to.equal(futureTime);
+        });
+
+        it("should generate a block and set time in one request", async function () {
+            const originalBlock = await starknetProvider.getBlock("latest");
+
+            const futureTime = originalBlock.timestamp * 2;
+            const { block_hash: blockHash } = await devnetProvider.setTime(futureTime, true);
+
+            const newBlock = await starknetProvider.getBlock("latest");
+            expect(newBlock.block_hash).to.equal(blockHash);
+            expect(newBlock.timestamp).to.equal(futureTime);
+        });
+
+        it("should increase time", async function () {
+            const originalBlock = await starknetProvider.getBlock("latest");
+
+            const timeIncrement = 100;
+            const { block_hash: newBlockHash } = await devnetProvider.increaseTime(timeIncrement);
+
+            const newBlock = await starknetProvider.getBlock("latest");
+            expect(newBlock.block_hash).to.equal(newBlockHash);
+            expect(newBlock.timestamp).to.be.equal(originalBlock.timestamp + timeIncrement);
+        });
+    });
 });
