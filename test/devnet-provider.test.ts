@@ -1,5 +1,5 @@
 import { expect, assert } from "chai";
-import { DevnetProvider, BalanceUnit, MintResponse } from "../src/devnet-provider";
+import { BalanceUnit, DevnetProvider, MintResponse } from "..";
 import * as starknet from "starknet";
 
 describe("DevnetProvider", function () {
@@ -43,6 +43,28 @@ describe("DevnetProvider", function () {
         it("works without specifying the unit", async function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT);
             assertMintResp(mintResp, DUMMY_AMOUNT, "WEI");
+        });
+
+        it("should reflect the minted amount in predeployed accounts info", async function () {
+            const accountIndex = 0;
+            const accountsBefore = await devnetProvider.getPredeployedAccounts();
+            const accountBefore = accountsBefore[accountIndex];
+
+            expect(accountBefore.balance).to.be.null; // balance not included if not requested
+
+            await devnetProvider.mint(accountBefore.address, DUMMY_AMOUNT, "WEI");
+
+            const accountsAfter = await devnetProvider.getPredeployedAccounts(true);
+            const accountAfter = accountsAfter[accountIndex];
+
+            const expectedAmount = BigInt(accountBefore.initial_balance) + BigInt(DUMMY_AMOUNT);
+            expect(accountAfter.balance).to.deep.equal({
+                wei: {
+                    amount: expectedAmount.toString(),
+                    unit: "WEI",
+                },
+                fri: { amount: accountBefore.initial_balance, unit: "FRI" },
+            });
         });
     });
 

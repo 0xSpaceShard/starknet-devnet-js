@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { Postman } from "./postman";
 import { RpcProvider } from "./rpc-provider";
-import { PredeployedAccount } from "./types";
+import { BalanceUnit, PredeployedAccount } from "./types";
 
 const DEFAULT_HTTP_TIMEOUT = 10_000; // ms
 const DEFAULT_DEVNET_URL = "http://127.0.0.1:5050";
@@ -10,8 +10,6 @@ export type DevnetProviderConfig = {
     url?: string;
     timeout?: number;
 };
-
-export type BalanceUnit = "WEI" | "FRI";
 
 export type MintResponse = {
     new_balance: bigint;
@@ -106,8 +104,10 @@ export class DevnetProvider {
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/predeployed#how-to-get-predeployment-info
      * @returns a list of containing information on predeployed accounts. Load an account using e.g. starknet.js.
      */
-    public async getPredeployedAccounts(): Promise<Array<PredeployedAccount>> {
-        return await this.rpcProvider.sendRequest("devnet_getPredeployedAccounts");
+    public async getPredeployedAccounts(withBalance = false): Promise<Array<PredeployedAccount>> {
+        return await this.rpcProvider.sendRequest("devnet_getPredeployedAccounts", {
+            with_balance: withBalance,
+        });
     }
 
     /**
