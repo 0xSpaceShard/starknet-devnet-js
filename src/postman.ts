@@ -64,7 +64,9 @@ export class Postman {
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#flush
      */
     public async flush(additionalArgs = { dryRun: false }): Promise<FlushResponse> {
-        return this.rpcProvider.sendRequest("devnet_postmanFlush", additionalArgs);
+        return this.rpcProvider.sendRequest("devnet_postmanFlush", {
+            dry_run: additionalArgs.dryRun,
+        });
     }
 
     /**

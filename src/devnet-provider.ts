@@ -108,7 +108,7 @@ export class DevnetProvider {
         additionalArgs = { withBalance: false },
     ): Promise<Array<PredeployedAccount>> {
         return await this.rpcProvider.sendRequest("devnet_getPredeployedAccounts", {
-            ...additionalArgs,
+            with_balance: additionalArgs.withBalance,
         });
     }
 
@@ -140,7 +140,7 @@ export class DevnetProvider {
     ): Promise<SetTimeResponse> {
         return await this.rpcProvider.sendRequest("devnet_setTime", {
             time,
-            ...additionalArgs,
+            generate_block: additionalArgs.generateBlock,
         });
     }
 
