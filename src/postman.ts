@@ -63,8 +63,8 @@ export class Postman {
     /**
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#flush
      */
-    public async flush(dryRun = false): Promise<FlushResponse> {
-        return this.rpcProvider.sendRequest("devnet_postmanFlush", { dry_run: dryRun });
+    public async flush(additionalArgs = { dryRun: false }): Promise<FlushResponse> {
+        return this.rpcProvider.sendRequest("devnet_postmanFlush", additionalArgs);
     }
 
     /**
@@ -75,12 +75,11 @@ export class Postman {
         address?: string,
         networkId?: string,
     ): Promise<LoadL1MessagingContractResponse> {
-        const response = await this.rpcProvider.sendRequest("devnet_postmanLoad", {
+        return await this.rpcProvider.sendRequest("devnet_postmanLoad", {
             network_id: networkId,
             address,
             network_url: networkUrl,
         });
-        return response;
     }
 
     /**

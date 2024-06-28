@@ -104,9 +104,11 @@ export class DevnetProvider {
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/predeployed#how-to-get-predeployment-info
      * @returns a list of containing information on predeployed accounts. Load an account using e.g. starknet.js.
      */
-    public async getPredeployedAccounts(withBalance = false): Promise<Array<PredeployedAccount>> {
+    public async getPredeployedAccounts(
+        additionalArgs = { withBalance: false },
+    ): Promise<Array<PredeployedAccount>> {
         return await this.rpcProvider.sendRequest("devnet_getPredeployedAccounts", {
-            with_balance: withBalance,
+            ...additionalArgs,
         });
     }
 
@@ -132,10 +134,13 @@ export class DevnetProvider {
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/next/starknet-time#set-time
      * @returns the new time in unix seconds and, if block creation requested, the hash of the created block
      */
-    public async setTime(time: number, generateBlock = false): Promise<SetTimeResponse> {
+    public async setTime(
+        time: number,
+        additionalArgs = { generateBlock: false },
+    ): Promise<SetTimeResponse> {
         return await this.rpcProvider.sendRequest("devnet_setTime", {
             time,
-            generate_block: generateBlock,
+            ...additionalArgs,
         });
     }
 

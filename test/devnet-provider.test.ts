@@ -54,7 +54,9 @@ describe("DevnetProvider", function () {
 
             await devnetProvider.mint(accountBefore.address, DUMMY_AMOUNT, "WEI");
 
-            const accountsAfter = await devnetProvider.getPredeployedAccounts(true);
+            const accountsAfter = await devnetProvider.getPredeployedAccounts({
+                withBalance: true,
+            });
             const accountAfter = accountsAfter[accountIndex];
 
             const expectedAmount = BigInt(accountBefore.initial_balance) + BigInt(DUMMY_AMOUNT);
@@ -127,7 +129,9 @@ describe("DevnetProvider", function () {
             const originalBlock = await starknetProvider.getBlock("latest");
 
             const futureTime = originalBlock.timestamp * 2;
-            const { block_hash: blockHash } = await devnetProvider.setTime(futureTime, true);
+            const { block_hash: blockHash } = await devnetProvider.setTime(futureTime, {
+                generateBlock: true,
+            });
 
             const newBlock = await starknetProvider.getBlock("latest");
             expect(newBlock.block_hash).to.equal(blockHash);
