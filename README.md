@@ -12,7 +12,7 @@ $ npm i starknet-devnet
 
 # Compatibility
 
-This library is compatible with Devnet versions starting with `v0.1.1`. More functionality is being added while you are reading this:
+This library is compatible with stable Devnet versions starting with `v0.1.1`. More functionality is being added while you are reading this:
 
 ## TODO (missing functionality)
 
