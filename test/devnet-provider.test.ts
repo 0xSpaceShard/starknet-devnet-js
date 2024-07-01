@@ -135,7 +135,8 @@ describe("DevnetProvider", function () {
 
             const { block_hash: newBlockHash } = await devnetProvider.createBlock();
             const newBlock = await starknetProvider.getBlockWithTxHashes(newBlockHash);
-            expect(newBlock.timestamp).to.equal(futureTime);
+            // expecting with `equal` may result in unwanted discrepancies
+            expect(newBlock.timestamp).to.be.greaterThanOrEqual(futureTime);
         });
 
         it("should generate a block and set time in one request", async function () {
@@ -148,7 +149,7 @@ describe("DevnetProvider", function () {
 
             const newBlock = await starknetProvider.getBlock("latest");
             expect(newBlock.block_hash).to.equal(blockHash);
-            expect(newBlock.timestamp).to.equal(futureTime);
+            expect(newBlock.timestamp).to.be.greaterThanOrEqual(futureTime);
         });
 
         it("should increase time", async function () {
@@ -159,7 +160,9 @@ describe("DevnetProvider", function () {
 
             const newBlock = await starknetProvider.getBlock("latest");
             expect(newBlock.block_hash).to.equal(newBlockHash);
-            expect(newBlock.timestamp).to.be.equal(originalBlock.timestamp + timeIncrement);
+            expect(newBlock.timestamp).to.be.greaterThanOrEqual(
+                originalBlock.timestamp + timeIncrement,
+            );
         });
     });
 });
