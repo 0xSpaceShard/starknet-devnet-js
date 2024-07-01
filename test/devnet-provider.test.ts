@@ -74,11 +74,11 @@ describe("DevnetProvider", function () {
 
             const expectedAmount = BigInt(accountBefore.initial_balance) + BigInt(DUMMY_AMOUNT);
             expect(accountAfter.balance).to.deep.equal({
-                wei: {
+                eth: {
                     amount: expectedAmount.toString(),
                     unit: "WEI",
                 },
-                fri: { amount: accountBefore.initial_balance, unit: "FRI" },
+                strk: { amount: accountBefore.initial_balance, unit: "FRI" },
             });
         });
     });
