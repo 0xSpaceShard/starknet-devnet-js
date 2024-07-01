@@ -152,4 +152,21 @@ export class DevnetProvider {
             time: increment,
         });
     }
+
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#dumping
+     * @param path the path where your Devnet instance will be serialized
+     */
+    public async dump(path: string): Promise<void> {
+        return await this.rpcProvider.sendRequest("devnet_dump", { path });
+    }
+
+    /**
+     * After loading, this DevnetProvider instance will be connected to the loaded Devnet instance.
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#dumping
+     * @param path the path from which a Devnet instance will be deserialized
+     */
+    public async load(path: string): Promise<void> {
+        return await this.rpcProvider.sendRequest("devnet_load", { path });
+    }
 }
