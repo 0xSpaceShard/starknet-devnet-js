@@ -24,8 +24,7 @@ describe("DevnetProvider", function () {
     });
 
     it("should have configurable timeout", async function () {
-        const dummyTimeout = 1; // ms
-        const insufficientTimeoutProvider = new DevnetProvider({ timeout: dummyTimeout });
+        const insufficientTimeoutProvider = new DevnetProvider({ timeout: 1 /* ms */ });
         try {
             // dummy action that takes more time than the too short timeout
             await insufficientTimeoutProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT);
