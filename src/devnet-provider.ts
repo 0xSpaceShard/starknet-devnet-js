@@ -59,14 +59,10 @@ export class DevnetProvider {
      * @returns `true` if the underlying Devnet instance is responsive; `false` otherwise
      */
     public async isAlive(): Promise<boolean> {
-        return new Promise((resolve, _) => {
-            this.httpProvider
-                .get("/is_alive")
-                .then((resp) => {
-                    resolve(resp.status === axios.HttpStatusCode.Ok);
-                })
-                .catch(() => resolve(false));
-        });
+        return this.httpProvider
+            .get("/is_alive")
+            .then((resp) => resp.status === axios.HttpStatusCode.Ok)
+            .catch(() => false);
     }
 
     /**
