@@ -33,7 +33,7 @@ The main export of this package is `DevnetProvider`. Assuming you have a [runnin
 import { DevnetProvider } from "starknet-devnet";
 
 async function helloDevnet() {
-    const devnet = new DevnetProvider();
+    const devnet = new DevnetProvider(); // accepts an optional configuration object
     console.log(await devnet.isAlive()); // true
 }
 ```

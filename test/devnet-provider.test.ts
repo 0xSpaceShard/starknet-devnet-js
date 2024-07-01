@@ -1,10 +1,13 @@
 import { expect, assert } from "chai";
-import { BalanceUnit, DevnetProvider, MintResponse } from "..";
+import { BalanceUnit, DevnetProvider, DevnetProviderError, MintResponse } from "..";
 import * as starknet from "starknet";
 
 describe("DevnetProvider", function () {
     const devnetProvider = new DevnetProvider();
     const starknetProvider = new starknet.RpcProvider({ nodeUrl: devnetProvider.url });
+
+    const DUMMY_ADDRESS = "0x1";
+    const DUMMY_AMOUNT = 20;
 
     beforeEach("restart the state", async function () {
         await devnetProvider.restart();
@@ -20,6 +23,20 @@ describe("DevnetProvider", function () {
         expect(accounts).length.to.be.greaterThan(0);
     });
 
+    it("should have configurable timeout", async function () {
+        const dummyTimeout = 1; // ms
+        const insufficientTimeoutProvider = new DevnetProvider({ timeout: dummyTimeout });
+        try {
+            // dummy action that takes more time than the too short timeout
+            await insufficientTimeoutProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT);
+            assert.fail("Should have timed out, got response instead");
+        } catch (err) {
+            const typedErr = err as DevnetProviderError;
+            expect(typedErr.message).to.contain("timeout");
+            expect(typedErr.message).to.contain("exceeded");
+        }
+    });
+
     function assertMintResp(resp: MintResponse, expectedAmount: number, expectedUnit: BalanceUnit) {
         expect(resp.tx_hash).to.match(/^0x[0-9a-fA-F]+/);
         expect(resp.new_balance).to.equal(BigInt(expectedAmount));
@@ -27,9 +44,6 @@ describe("DevnetProvider", function () {
     }
 
     describe("minting", function () {
-        const DUMMY_ADDRESS = "0x1";
-        const DUMMY_AMOUNT = 20;
-
         it("works for WEI", async function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT, "WEI");
             assertMintResp(mintResp, DUMMY_AMOUNT, "WEI");
