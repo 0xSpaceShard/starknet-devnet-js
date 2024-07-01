@@ -7,7 +7,7 @@ LOCAL_VERSION=$(jq -r ".version" package.json)
 NPM_VERSION=$(npm view "$PACKAGE_NAME" dist-tags.latest)
 
 if [ "$LOCAL_VERSION" = "$NPM_VERSION" ]; then
-    echo "The latest npm version is equal to current package version ($LOCAL_VERSION). Increment the version to publish to npm."
+    echo "The latest npm version is equal to current package version ($LOCAL_VERSION). Increment to publish to npm."
 else
     npm ci
     npm run build
