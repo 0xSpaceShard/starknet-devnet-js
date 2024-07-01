@@ -57,6 +57,7 @@ workflows:
                   filters:
                       branches:
                           only:
+                              - automatic-publish # TODO remove before merge
                               - master
                   requires:
                       - build-and-test

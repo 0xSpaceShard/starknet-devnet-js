@@ -2,11 +2,12 @@
 
 set -euo pipefail
 
+PACKAGE_NAME=$(jq -r ".name" package.json)
 LOCAL_VERSION=$(jq -r ".version" package.json)
-NPM_VERSION=$(npm view @starknet-devnet dist-tags.latest)
+NPM_VERSION=$(npm view "$PACKAGE_NAME" dist-tags.latest)
 
-if [ $LOCAL_VERSION = $NPM_VERSION ]; then
-    echo "Latest npm version is equal to current package version. Up the version to publish to npm."
+if [ "$LOCAL_VERSION" = "$NPM_VERSION" ]; then
+    echo "The latest npm version is equal to current package version ($LOCAL_VERSION). Increment the version to publish to npm."
 else
     npm ci
     npm run build
