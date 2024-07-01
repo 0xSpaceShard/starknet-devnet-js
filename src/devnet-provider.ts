@@ -3,11 +3,13 @@ import { Postman } from "./postman";
 import { RpcProvider } from "./rpc-provider";
 import { BalanceUnit, PredeployedAccount } from "./types";
 
-const DEFAULT_HTTP_TIMEOUT = 10_000; // ms
+/** milliseconds */
+const DEFAULT_HTTP_TIMEOUT = 30_000;
 const DEFAULT_DEVNET_URL = "http://127.0.0.1:5050";
 
 export type DevnetProviderConfig = {
     url?: string;
+    /** milliseconds */
     timeout?: number;
 };
 

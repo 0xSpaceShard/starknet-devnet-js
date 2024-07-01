@@ -11,3 +11,12 @@ export interface PredeployedAccount {
     public_key: string;
     address: string;
 }
+
+export class DevnetProviderError extends Error {
+    constructor(msg: string) {
+        super(msg);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, DevnetProviderError.prototype);
+    }
+}
