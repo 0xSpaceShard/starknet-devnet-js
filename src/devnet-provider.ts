@@ -50,6 +50,7 @@ export class DevnetProvider {
         this.httpProvider = axios.create({
             baseURL: this.url,
             timeout: config?.timeout ?? DEFAULT_HTTP_TIMEOUT,
+            maxRedirects: 3,
         });
         this.rpcProvider = new RpcProvider(this.httpProvider, this.url);
         this.postman = new Postman(this.rpcProvider);
