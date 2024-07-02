@@ -33,7 +33,7 @@ jobs:
                   command: |
                       curl -SsLf https://github.com/0xSpaceShard/starknet-devnet-rs/releases/download/v0.1.2/starknet-devnet-x86_64-unknown-linux-gnu.tar.gz |
                           tar -xvz -C .
-                      starknet-devnet --state-archive-capacity full --dump-on exit --dump-path "."
+                      ./starknet-devnet --state-archive-capacity full --dump-on exit --dump-path "."
             - run:
                   name: Spawn Anvil
                   command: >-
