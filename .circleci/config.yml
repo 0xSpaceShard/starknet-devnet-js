@@ -33,13 +33,20 @@ jobs:
                   command: |
                       curl -SsLf https://github.com/0xSpaceShard/starknet-devnet-rs/releases/download/v0.1.2/starknet-devnet-x86_64-unknown-linux-gnu.tar.gz |
                           tar -xvz -C .
-                  #   ./starknet-devnet --state-archive-capacity full --dump-on exit --dump-path "dummy.dump.json" &
-                  #   sleep 3
+                      ./starknet-devnet --state-archive-capacity full --dump-on exit --dump-path "dummy.dump.json" &
+                      sleep 3
+                      curl localhost:5050/is_alive
+            - run:
+                  name: Check Devnet
+                  command: curl localhost:5050/is_alive
             - run:
                   name: Spawn Anvil
                   command: >-
                       docker run -d --network host --name anvil \
                         ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
+            - run:
+                  name: Check Devnet
+                  command: curl localhost:5050/is_alive
             - run:
                   name: Test
                   command: npm run test
