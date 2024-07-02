@@ -11,7 +11,7 @@
         "build": "tsc -p tsconfig.build.json",
         "build-check": "tsc -p tsconfig.build.json --noEmit",
         "test": "mocha -r ts-node/register test/**/*.ts",
-        "pretest": "npm run build",
+        "pretest": "curl localhost:5050/is_alive && npm run build",
         "format": "prettier --log-level log --write \"**/*.{ts,js,md,yml,json}\"",
         "format-check": "prettier --log-level log --check \"**/*.{ts,js,md,yml,json}\"",
         "lint": "eslint $(git ls-files '*.ts') --cache --fix",
