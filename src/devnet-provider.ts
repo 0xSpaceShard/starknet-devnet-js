@@ -38,12 +38,12 @@ export interface IncreaseTimeResponse {
 }
 
 export class DevnetProvider {
-    public url: string;
+    public readonly url: string;
     private httpProvider: AxiosInstance;
     private rpcProvider: RpcProvider;
 
     /** Handles L1-L2 communication. */
-    public postman: Postman;
+    public readonly postman: Postman;
 
     public constructor(config?: DevnetProviderConfig) {
         this.url = config?.url || DEFAULT_DEVNET_URL;
