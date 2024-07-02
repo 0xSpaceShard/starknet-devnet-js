@@ -10,8 +10,6 @@ describe("DevnetProvider", function () {
     const DUMMY_AMOUNT = 20;
 
     beforeEach("restart the state", async function () {
-        const resp = await fetch(devnetProvider.url + "/is_alive");
-        console.log("DEBUG resp in beforeEach", resp, await resp.text());
         await devnetProvider.restart();
     });
 
