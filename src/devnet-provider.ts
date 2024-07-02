@@ -155,9 +155,9 @@ export class DevnetProvider {
 
     /**
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#dumping
-     * @param path the path where your Devnet instance will be serialized
+     * @param path the path where your Devnet instance will be serialized; if not provided, defaults to the dump-path provided via CLI on Devnet startup.
      */
-    public async dump(path: string): Promise<void> {
+    public async dump(path?: string): Promise<void> {
         return await this.rpcProvider.sendRequest("devnet_dump", { path });
     }
 

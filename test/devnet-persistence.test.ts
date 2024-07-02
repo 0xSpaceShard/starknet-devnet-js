@@ -6,8 +6,8 @@ import { expect } from "chai";
 describe("Devnet persistence", async function () {
     this.timeout(10_000); // ms
 
-    const WORKDIR = "/tmp";
-    const DUMP_EXTENSION = ".dump";
+    const WORKDIR = ".";
+    const DUMP_EXTENSION = ".dump.json";
 
     const DUMMY_ADDRESS = "0x1";
     const DUMMY_AMOUNT = 20;
@@ -17,18 +17,19 @@ describe("Devnet persistence", async function () {
     function removeDumps() {
         for (const fileName of fs.readdirSync(WORKDIR)) {
             if (fileName.endsWith(DUMP_EXTENSION)) {
-                fs.rmSync(path.join(WORKDIR, fileName));
+                const file = path.join(WORKDIR, fileName);
+                fs.unlinkSync(file);
             }
         }
     }
 
-    before("clear workdir and Devnet state", async function () {
+    beforeEach("clear workdir and Devnet state", async function () {
         removeDumps();
         await devnetProvider.restart();
     });
 
-    after("clear workdir", function () {
-        // removeDumps();
+    afterEach("clear workdir", function () {
+        removeDumps();
     });
 
     function getRandomDumpPath() {
@@ -36,27 +37,31 @@ describe("Devnet persistence", async function () {
         return path.join(WORKDIR, name);
     }
 
+    async function dummyMint() {
+        const { new_balance } = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT);
+        return new_balance;
+    }
+
     it("should dump and load", async function () {
         const dumpPath = getRandomDumpPath();
 
-        async function dummyMint() {
-            const { new_balance } = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT);
-            return new_balance;
-        }
-
         const balanceBeforeDump = await dummyMint();
         await devnetProvider.dump(dumpPath);
-        console.log("DEBUG going to sleep");
-        await new Promise((resolve, _) => setTimeout(resolve, 3000));
-        console.log("DEBUG woke up from sleep");
-        expect(fs.existsSync(dumpPath)).to.be.true;
 
         const balanceBeforeLoad = await dummyMint();
         expect(balanceBeforeLoad).to.equal(balanceBeforeDump + BigInt(DUMMY_AMOUNT));
 
+        // once a Devnet fix is released (hopefully after 0.1.2), this restart can be omitted.
+        await devnetProvider.restart();
+
         await devnetProvider.load(dumpPath);
-        const finalBalance = dummyMint();
+        const finalBalance = await dummyMint();
 
         expect(finalBalance).to.equal(balanceBeforeDump + BigInt(DUMMY_AMOUNT));
+    });
+
+    it("should dump without providing a path in request", async function () {
+        await dummyMint(); // dumping is skipped if there are no transactions, so we add one
+        await devnetProvider.dump();
     });
 });
