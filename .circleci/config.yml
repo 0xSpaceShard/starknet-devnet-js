@@ -35,7 +35,7 @@ jobs:
                         shardlabs/starknet-devnet-rs:0.1.2 --state-archive-capacity full --dump-on exit --dump-path "dummy.dump.json"
             - run:
                   name: Spawn Anvil
-                  command: >-
+                  command: |
                       docker run -d --network host --name anvil \
                         ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
             - run:
