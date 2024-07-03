@@ -45,6 +45,7 @@ jobs:
                       curl 127.0.0.1:5050/is_alive
                       curl http://127.0.0.1:5050/is_alive
                       npm run dummy
+                      npm run dummy
             - run:
                   name: Spawn Anvil
                   command: >-
@@ -56,6 +57,8 @@ jobs:
                       curl localhost:5050/is_alive
                       curl 127.0.0.1:5050/is_alive
                       curl http://127.0.0.1:5050/is_alive
+                      npm run dummy
+                      npm run dummy
             - run:
                   name: Test
                   command: npm run test
