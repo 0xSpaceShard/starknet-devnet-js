@@ -10,6 +10,9 @@ describe("DevnetProvider", function () {
     const DUMMY_AMOUNT = 20;
 
     beforeEach("restart the state", async function () {
+        for (const env_var of ["HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy"]) {
+            console.log(`DEBUG ${env_var}=${process.env[env_var]}`);
+        }
         await devnetProvider.restart();
     });
 
