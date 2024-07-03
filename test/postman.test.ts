@@ -40,10 +40,11 @@ describe("Postman", function () {
         await devnetProvider.restart();
         l2Account = await getPredeployedL2Account();
 
-        const l2Sierra = getContractArtifact("test/data/cairo_1_l1l2.sierra");
+        // The contract sources can be found in the same directory as the artifacts.
+        const l2Sierra = getContractArtifact("test/data/l1_l2.sierra");
         const l2ContractDeployment = await l2Account.declareAndDeploy({
             contract: l2Sierra,
-            casm: getContractArtifact("test/data/cairo_1_l1l2.casm"),
+            compiledClassHash: "0x02548c46a426421b5156ebbdd9a1ee0a32ec4588af5c9a68d636725cfa11d300",
         });
         l2Contract = new starknet.Contract(
             l2Sierra.abi,
