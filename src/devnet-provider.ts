@@ -1,6 +1,4 @@
 import axios, { AxiosInstance } from "axios";
-import * as http from "http";
-import * as https from "https";
 import { Postman } from "./postman";
 import { RpcProvider } from "./rpc-provider";
 import { BalanceUnit, PredeployedAccount } from "./types";
@@ -52,10 +50,6 @@ export class DevnetProvider {
         this.httpProvider = axios.create({
             baseURL: this.url,
             timeout: config?.timeout ?? DEFAULT_HTTP_TIMEOUT,
-            maxRedirects: 3,
-            proxy: false,
-            httpAgent: new http.Agent({ keepAlive: false }),
-            httpsAgent: new https.Agent({ keepAlive: false }),
         });
         this.rpcProvider = new RpcProvider(this.httpProvider, this.url);
         this.postman = new Postman(this.rpcProvider);
