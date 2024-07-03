@@ -21,9 +21,6 @@ This library is compatible with stable Devnet versions in the inclusive range: `
     -   devnet_stopImpesonatingAccount
     -   devnet_autoImpersonate
     -   devnet_stopAutoImpersonate
--   [ ] dumping and loading
-    -   devnet_dump
-    -   devnet_load
 
 # Usage
 

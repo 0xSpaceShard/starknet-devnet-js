@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosError, AxiosInstance } from "axios";
 import { DevnetProviderError } from "./types";
 
 export class RpcProvider {
@@ -27,7 +27,7 @@ export class RpcProvider {
                 }
             })
             .catch((err) => {
-                if (err.code === "ECONNABORTED") {
+                if (err.code === AxiosError.ECONNABORTED) {
                     throw new DevnetProviderError(
                         `${err.message}. Try specifying a greater timeout in DevnetProvider({...})`,
                     );

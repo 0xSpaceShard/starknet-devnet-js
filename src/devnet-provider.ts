@@ -38,12 +38,12 @@ export interface IncreaseTimeResponse {
 }
 
 export class DevnetProvider {
-    public url: string;
+    public readonly url: string;
     private httpProvider: AxiosInstance;
     private rpcProvider: RpcProvider;
 
     /** Handles L1-L2 communication. */
-    public postman: Postman;
+    public readonly postman: Postman;
 
     public constructor(config?: DevnetProviderConfig) {
         this.url = config?.url || DEFAULT_DEVNET_URL;
@@ -151,5 +151,22 @@ export class DevnetProvider {
         return await this.rpcProvider.sendRequest("devnet_increaseTime", {
             time: increment,
         });
+    }
+
+    /**
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#dumping
+     * @param path the path where your Devnet instance will be serialized; if not provided, defaults to the dump-path provided via CLI on Devnet startup.
+     */
+    public async dump(path?: string): Promise<void> {
+        return await this.rpcProvider.sendRequest("devnet_dump", { path });
+    }
+
+    /**
+     * After loading, this DevnetProvider instance will be connected to the loaded Devnet instance.
+     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#dumping
+     * @param path the path from which a Devnet instance will be deserialized
+     */
+    public async load(path: string): Promise<void> {
+        return await this.rpcProvider.sendRequest("devnet_load", { path });
     }
 }

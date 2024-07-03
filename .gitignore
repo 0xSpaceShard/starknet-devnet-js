@@ -1,3 +1,6 @@
 node_modules
 dist
 .eslintcache
+
+# testing artifacts
+*.dump.json
