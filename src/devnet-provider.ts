@@ -51,6 +51,7 @@ export class DevnetProvider {
             baseURL: this.url,
             timeout: config?.timeout ?? DEFAULT_HTTP_TIMEOUT,
             maxRedirects: 3,
+            proxy: false,
         });
         this.rpcProvider = new RpcProvider(this.httpProvider, this.url);
         this.postman = new Postman(this.rpcProvider);
