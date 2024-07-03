@@ -29,9 +29,6 @@ jobs:
                   name: Lint
                   command: npm run lint-check
             - run:
-                  name: Dummy
-                  command: npm run dummy
-            - run:
                   name: Spawn Devnet
                   command: |
                       curl -SsLf https://github.com/0xSpaceShard/starknet-devnet-rs/releases/download/v0.1.2/starknet-devnet-x86_64-unknown-linux-gnu.tar.gz |
@@ -47,6 +44,7 @@ jobs:
                       curl localhost:5050/is_alive
                       curl 127.0.0.1:5050/is_alive
                       curl http://127.0.0.1:5050/is_alive
+                      npm run dummy
             - run:
                   name: Spawn Anvil
                   command: >-
