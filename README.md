@@ -12,15 +12,7 @@ $ npm i starknet-devnet
 
 # Compatibility
 
-This library is compatible with stable Devnet versions in the inclusive range: `v0.1.1`-`v0.1.2`. More functionality is being added while you are reading this:
-
-## TODO (missing functionality)
-
--   [ ] account impersonation
-    -   devnet_impersonateAccount
-    -   devnet_stopImpesonatingAccount
-    -   devnet_autoImpersonate
-    -   devnet_stopAutoImpersonate
+This library is compatible with stable Devnet versions in the inclusive range: `v0.1.1`-`v0.1.2`.
 
 # Usage
 

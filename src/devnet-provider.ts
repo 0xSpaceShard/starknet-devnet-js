@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { Postman } from "./postman";
+import { Cheats } from "./cheats";
 import { RpcProvider } from "./rpc-provider";
 import { BalanceUnit, DevnetProviderError, PredeployedAccount } from "./types";
 
@@ -45,6 +46,8 @@ export class DevnetProvider {
     /** Handles L1-L2 communication. */
     public readonly postman: Postman;
 
+    public readonly cheats: Cheats;
+
     public constructor(config?: DevnetProviderConfig) {
         this.url = config?.url || DEFAULT_DEVNET_URL;
         this.httpProvider = axios.create({
@@ -53,6 +56,7 @@ export class DevnetProvider {
         });
         this.rpcProvider = new RpcProvider(this.httpProvider, this.url);
         this.postman = new Postman(this.rpcProvider);
+        this.cheats = new Cheats(this.rpcProvider);
     }
 
     /**
