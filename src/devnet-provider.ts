@@ -43,9 +43,10 @@ export class DevnetProvider {
     private httpProvider: AxiosInstance;
     private rpcProvider: RpcProvider;
 
-    /** Handles L1-L2 communication. */
+    /** Contains methods for L1-L2 communication. */
     public readonly postman: Postman;
 
+    /** Contains methods for cheating, e.g. account impersonation. */
     public readonly cheats: Cheats;
 
     public constructor(config?: DevnetProviderConfig) {
