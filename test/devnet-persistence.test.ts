@@ -10,7 +10,7 @@ describe("Devnet persistence", async function () {
     const DUMP_EXTENSION = ".dump.json";
 
     const DUMMY_ADDRESS = "0x1";
-    const DUMMY_AMOUNT = 20;
+    const DUMMY_AMOUNT = 20n;
 
     const devnetProvider = new DevnetProvider();
 

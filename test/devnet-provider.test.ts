@@ -7,7 +7,7 @@ describe("DevnetProvider", function () {
     const starknetProvider = new starknet.RpcProvider({ nodeUrl: devnetProvider.url });
 
     const DUMMY_ADDRESS = "0x1";
-    const DUMMY_AMOUNT = 20;
+    const DUMMY_AMOUNT = 20n;
 
     beforeEach("restart the state", async function () {
         await devnetProvider.restart();
@@ -36,7 +36,7 @@ describe("DevnetProvider", function () {
         }
     });
 
-    function assertMintResp(resp: MintResponse, expectedAmount: number, expectedUnit: BalanceUnit) {
+    function assertMintResp(resp: MintResponse, expectedAmount: bigint, expectedUnit: BalanceUnit) {
         expect(resp.tx_hash).to.match(/^0x[0-9a-fA-F]+/);
         expect(resp.new_balance).to.equal(BigInt(expectedAmount));
         expect(resp.unit).to.equal(expectedUnit);
@@ -80,6 +80,18 @@ describe("DevnetProvider", function () {
                 },
                 strk: { amount: accountBefore.initial_balance, unit: "FRI" },
             });
+        });
+
+        it("works with large amount multiple of 10", async function () {
+            const amount = 10n ** 30n;
+            const resp = await devnetProvider.mint(DUMMY_ADDRESS, amount, "WEI");
+            assertMintResp(resp, amount, "WEI");
+        });
+
+        it("works with large amount with non-zero ones digit", async function () {
+            const amount = 10n ** 30n + 1n;
+            const resp = await devnetProvider.mint(DUMMY_ADDRESS, amount, "WEI");
+            assertMintResp(resp, amount, "WEI");
         });
     });
 
