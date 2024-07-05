@@ -1,12 +1,16 @@
 import { RpcProvider, Account, Contract, LibraryError } from "starknet";
 import { DevnetProvider } from "..";
-import { getContractArtifact, getPredeployedAccount } from "./util";
+import { getContractArtifact, getEnvVar, getPredeployedAccount } from "./util";
 import { assert, expect } from "chai";
 
 describe("Account impersonation", function () {
     this.timeout(30_000); // ms
 
-    const devnetProvider = new DevnetProvider();
+    /**
+     * Assuming there is a Devnet instance forked from the network where the impersonated account is located.
+     */
+    const FORKED_DEVNET_URL = `http://localhost:${getEnvVar("FORKED_DEVNET_PORT")}`;
+    const devnetProvider = new DevnetProvider({ url: FORKED_DEVNET_URL });
     const starknetProvider = new RpcProvider({ nodeUrl: devnetProvider.url });
 
     /** An actual mainnet account */
@@ -28,7 +32,7 @@ describe("Account impersonation", function () {
 
         const contractDeployment = await predeployedAccount.declareAndDeploy({
             contract: contractArtifact,
-            compiledClassHash: "0x0276feffed3bf366a4305f5e32e0ccb08c2da4915d83d81127b5b9d4210a80db",
+            compiledClassHash: "0x63b33a5f2f46b1445d04c06d7832c48c48ad087ce0803b71f2b8d96353716ca",
             constructorCalldata: { initial_balance: 0 },
         });
         contract = new Contract(

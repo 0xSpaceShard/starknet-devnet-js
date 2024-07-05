@@ -23,3 +23,13 @@ export async function getPredeployedAccount(
         predeployedAccountData.private_key,
     );
 }
+
+/**
+ * Return the value associated to the variable name, or throw an error if not defined.
+ */
+export function getEnvVar(varName: string): string {
+    if (varName in process.env) {
+        return process.env[varName] as string;
+    }
+    throw new Error(`Environment variable not defined: ${varName}`);
+}
