@@ -28,9 +28,7 @@ export class RpcProvider {
             })
             .catch((err) => {
                 if (err.code === AxiosError.ECONNABORTED) {
-                    throw new DevnetProviderError(
-                        `${err.message}. Try specifying a greater timeout in DevnetProvider({...})`,
-                    );
+                    throw DevnetProviderError.fromAxiosError(err);
                 }
                 throw err;
             });

@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+
 export type BigNumberish = string | number | bigint;
 
 export type BalanceUnit = "WEI" | "FRI";
@@ -18,5 +20,15 @@ export class DevnetProviderError extends Error {
 
         // Set the prototype explicitly.
         Object.setPrototypeOf(this, DevnetProviderError.prototype);
+    }
+
+    public static fromAxiosError(err: AxiosError) {
+        if (err.code === AxiosError.ECONNABORTED) {
+            return new DevnetProviderError(
+                `${err.message}. Try specifying a greater timeout in DevnetProvider({...})`,
+            );
+        }
+
+        throw new Error(`Cannot create a DevnetProviderError from ${err}`);
     }
 }

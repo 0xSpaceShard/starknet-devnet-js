@@ -1,7 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import { Postman } from "./postman";
 import { RpcProvider } from "./rpc-provider";
-import { BalanceUnit, PredeployedAccount } from "./types";
+import { BalanceUnit, DevnetProviderError, PredeployedAccount } from "./types";
 
 /** milliseconds */
 const DEFAULT_HTTP_TIMEOUT = 30_000;
@@ -73,6 +73,22 @@ export class DevnetProvider {
         await this.rpcProvider.sendRequest("devnet_restart");
     }
 
+    private async sendStringifiedJson(url: string, json: string) {
+        return this.httpProvider
+            .post(url, json, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((resp) => resp.data)
+            .catch((err) => {
+                if (err.code === AxiosError.ECONNABORTED) {
+                    throw DevnetProviderError.fromAxiosError(err);
+                }
+                throw err.response?.data ?? err;
+            });
+    }
+
     /**
      * Generate funds at the provided address. For return spec and more info, see
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#mint-token---local-faucet
@@ -82,14 +98,17 @@ export class DevnetProvider {
      */
     public async mint(
         address: string,
-        amount: number,
+        amount: bigint,
         unit: BalanceUnit = "WEI",
     ): Promise<MintResponse> {
-        const respData = await this.rpcProvider.sendRequest("devnet_mint", {
-            address,
-            amount,
-            unit,
-        });
+        const respData = await this.sendStringifiedJson(
+            this.url + "/mint",
+            `{
+            "address": "${address}",
+            "amount": ${amount},
+            "unit": "${unit}"
+        }`,
+        );
 
         return {
             new_balance: BigInt(respData.new_balance),
