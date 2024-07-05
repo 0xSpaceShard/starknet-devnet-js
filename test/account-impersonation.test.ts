@@ -58,6 +58,7 @@ describe("Account impersonation", function () {
         const incrementAmount = 100n;
 
         // Attempt invoking a contract method - should fail since we defined the account using a dummy key.
+        // The contract was connected to the account during setup.
         await expectValidationFailure(contract.increase_balance(incrementAmount, 0));
 
         // Configure impersonation and expect transaction success
@@ -79,6 +80,7 @@ describe("Account impersonation", function () {
         const incrementAmount = 100n;
 
         // Attempt invoking a contract method - should fail since we defined the account using a dummy key.
+        // The contract was connected to the account during setup.
         await expectValidationFailure(contract.increase_balance(incrementAmount, 0));
 
         // Configure impersonation and expect transaction success
