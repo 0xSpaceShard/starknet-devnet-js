@@ -2,7 +2,7 @@ import * as starknet from "starknet";
 import { DevnetProvider } from "..";
 import * as ethers from "ethers";
 import { expect } from "chai";
-import { expectHexEquality, getContractArtifact } from "./util";
+import { expectHexEquality, getContractArtifact, getPredeployedAccount } from "./util";
 
 const HEX_REGEX = /^0x[0-9A-Fa-f]+/;
 
@@ -26,19 +26,10 @@ describe("Postman", function () {
     let mockStarknetMessaging: ethers.Contract;
     let l1L2Example: ethers.Contract;
 
-    async function getPredeployedL2Account() {
-        const predeployedAccountData = (await devnetProvider.getPredeployedAccounts())[0];
-
-        return new starknet.Account(
-            l2Provider,
-            predeployedAccountData.address,
-            predeployedAccountData.private_key,
-        );
-    }
-
     before(async function () {
         await devnetProvider.restart();
-        l2Account = await getPredeployedL2Account();
+
+        l2Account = await getPredeployedAccount(devnetProvider, l2Provider);
 
         // The contract sources can be found in the same directory as the artifacts.
         const l2Sierra = getContractArtifact("test/data/l1_l2.sierra");

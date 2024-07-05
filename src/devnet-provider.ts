@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { Postman } from "./postman";
+import { Cheats } from "./cheats";
 import { RpcProvider } from "./rpc-provider";
 import { BalanceUnit, DevnetProviderError, PredeployedAccount } from "./types";
 
@@ -42,8 +43,11 @@ export class DevnetProvider {
     private httpProvider: AxiosInstance;
     private rpcProvider: RpcProvider;
 
-    /** Handles L1-L2 communication. */
+    /** Contains methods for L1-L2 communication. */
     public readonly postman: Postman;
+
+    /** Contains methods for cheating, e.g. account impersonation. */
+    public readonly cheats: Cheats;
 
     public constructor(config?: DevnetProviderConfig) {
         this.url = config?.url || DEFAULT_DEVNET_URL;
@@ -53,6 +57,7 @@ export class DevnetProvider {
         });
         this.rpcProvider = new RpcProvider(this.httpProvider, this.url);
         this.postman = new Postman(this.rpcProvider);
+        this.cheats = new Cheats(this.rpcProvider);
     }
 
     /**
