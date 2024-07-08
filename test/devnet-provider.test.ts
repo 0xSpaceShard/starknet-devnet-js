@@ -1,6 +1,7 @@
 import { expect, assert } from "chai";
 import { BalanceUnit, DevnetProvider, DevnetProviderError, MintResponse } from "..";
 import * as starknet from "starknet";
+import { ETH_TOKEN_CONTRACT_ADDRESS, STRK_TOKEN_CONTRACT_ADDRESS, getAccountBalance } from "./util";
 
 describe("DevnetProvider", function () {
     const devnetProvider = new DevnetProvider();
@@ -14,8 +15,8 @@ describe("DevnetProvider", function () {
     });
 
     it("should have a healthcheck endpoint", async function () {
-        const isAlive = await devnetProvider.isAlive();
-        expect(isAlive).to.be.true;
+        const alive = await devnetProvider.isAlive();
+        expect(alive).to.be.true;
     });
 
     it("should have predeployed accounts", async function () {
@@ -36,26 +37,44 @@ describe("DevnetProvider", function () {
         }
     });
 
-    function assertMintResp(resp: MintResponse, expectedAmount: bigint, expectedUnit: BalanceUnit) {
+    function assertMintingResponse(
+        resp: MintResponse,
+        expectedAmount: bigint,
+        expectedUnit: BalanceUnit,
+    ) {
         expect(resp.tx_hash).to.match(/^0x[0-9a-fA-F]+/);
         expect(resp.new_balance).to.equal(BigInt(expectedAmount));
         expect(resp.unit).to.equal(expectedUnit);
     }
 
+    async function assertBalance(
+        accountAddress: string,
+        expectedAmount: bigint,
+        tokenContractAddress: string,
+    ) {
+        const actualBalance = await getAccountBalance(accountAddress, starknetProvider, {
+            tokenContractAddress,
+        });
+        expect(actualBalance).to.equal(expectedAmount);
+    }
+
     describe("minting", function () {
         it("works for WEI", async function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT, "WEI");
-            assertMintResp(mintResp, DUMMY_AMOUNT, "WEI");
+            assertMintingResponse(mintResp, DUMMY_AMOUNT, "WEI");
+            await assertBalance(DUMMY_ADDRESS, DUMMY_AMOUNT, ETH_TOKEN_CONTRACT_ADDRESS);
         });
 
         it("works for FRI", async function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT, "FRI");
-            assertMintResp(mintResp, DUMMY_AMOUNT, "FRI");
+            assertMintingResponse(mintResp, DUMMY_AMOUNT, "FRI");
+            await assertBalance(DUMMY_ADDRESS, DUMMY_AMOUNT, STRK_TOKEN_CONTRACT_ADDRESS);
         });
 
         it("works without specifying the unit", async function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT);
-            assertMintResp(mintResp, DUMMY_AMOUNT, "WEI");
+            assertMintingResponse(mintResp, DUMMY_AMOUNT, "WEI");
+            await assertBalance(DUMMY_ADDRESS, DUMMY_AMOUNT, ETH_TOKEN_CONTRACT_ADDRESS);
         });
 
         it("should reflect the minted amount in predeployed accounts info", async function () {
@@ -85,13 +104,15 @@ describe("DevnetProvider", function () {
         it("works with large amount multiple of 10", async function () {
             const amount = 10n ** 30n;
             const resp = await devnetProvider.mint(DUMMY_ADDRESS, amount, "WEI");
-            assertMintResp(resp, amount, "WEI");
+            assertMintingResponse(resp, amount, "WEI");
+            await assertBalance(DUMMY_ADDRESS, amount, ETH_TOKEN_CONTRACT_ADDRESS);
         });
 
         it("works with large amount with non-zero ones digit", async function () {
             const amount = 10n ** 30n + 1n;
             const resp = await devnetProvider.mint(DUMMY_ADDRESS, amount, "WEI");
-            assertMintResp(resp, amount, "WEI");
+            assertMintingResponse(resp, amount, "WEI");
+            await assertBalance(DUMMY_ADDRESS, amount, ETH_TOKEN_CONTRACT_ADDRESS);
         });
     });
 
