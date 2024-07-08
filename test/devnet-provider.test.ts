@@ -14,8 +14,8 @@ describe("DevnetProvider", function () {
     });
 
     it("should have a healthcheck endpoint", async function () {
-        const isAlive = await devnetProvider.isAlive();
-        expect(isAlive).to.be.true;
+        const alive = await devnetProvider.isAlive();
+        expect(alive).to.be.true;
     });
 
     it("should have predeployed accounts", async function () {
