@@ -14,6 +14,8 @@ $ npm i starknet-devnet
 
 This library is compatible with stable Devnet versions in the inclusive range: `v0.1.1`-`v0.1.2`.
 
+[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed in [the tests](./test/util.ts#L53)
+
 # Usage
 
 The main export of this package is `DevnetProvider`. Assuming you have a [running Devnet](https://0xspaceshard.github.io/starknet-devnet-rs/docs/category/running), simply import `DevnetProvider` in your JS/TS program and interact with the Devnet instance:
