@@ -36,3 +36,11 @@ Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundr
 ## Examples
 
 See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for usage examples.
+
+## Contribute
+
+If you spot a problem or room for improvement, check if an issue for it [already exists](https://github.com/0xSpaceShard/starknet-devnet-js/issues). If not, [create a new one](https://github.com/0xSpaceShard/starknet-devnet-js/issues/new). You are welcome to open a PR yourself to close the issue. Once you open a PR, you will see a template with a list of steps - please follow them.
+
+### Test
+
+Before running the tests with `npm test`, follow the steps defined in the [CI/CD config file](.circleci/config.yml). If your test relies on environment variables, load them with `getEnvVar`. Conversely, to find all environment variables that need to be set, search the repo for `getEnvVar`.

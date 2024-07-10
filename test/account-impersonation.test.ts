@@ -1,4 +1,4 @@
-import { RpcProvider, Account, Contract, LibraryError } from "starknet";
+import { RpcProvider, Account, Contract, LibraryError, Provider } from "starknet";
 import { DevnetProvider } from "..";
 import { getContractArtifact, getEnvVar, getPredeployedAccount } from "./util";
 import { assert, expect } from "chai";
@@ -9,19 +9,26 @@ describe("Account impersonation", function () {
     /**
      * Assuming there is a Devnet instance forked from the network where the impersonated account is located.
      */
-    const FORKED_DEVNET_URL = `http://localhost:${getEnvVar("FORKED_DEVNET_PORT")}`;
-    const devnetProvider = new DevnetProvider({ url: FORKED_DEVNET_URL });
-    const starknetProvider = new RpcProvider({ nodeUrl: devnetProvider.url });
+    let devnetProvider: DevnetProvider;
+    let starknetProvider: Provider;
 
-    /** An actual mainnet account */
-    const impersonatedAccount = new Account(
-        starknetProvider,
-        "0x0276feffed3bf366a4305f5e32e0ccb08c2da4915d83d81127b5b9d4210a80db",
-        "0x1", // dummy private key, in impersonation it is not actually used for signing
-    );
+    /** An actual mainnet account. */
+    let impersonatedAccount: Account;
 
-    const contractArtifact = getContractArtifact("test/data/simple.sierra");
+    /** A contract used for testing account interaction with the state.*/
     let contract: Contract;
+
+    before("set up providers and account for impersonation", function () {
+        const forkedDevnetUrl = `http://localhost:${getEnvVar("FORKED_DEVNET_PORT")}`;
+        devnetProvider = new DevnetProvider({ url: forkedDevnetUrl });
+        starknetProvider = new RpcProvider({ nodeUrl: devnetProvider.url });
+
+        impersonatedAccount = new Account(
+            starknetProvider,
+            "0x0276feffed3bf366a4305f5e32e0ccb08c2da4915d83d81127b5b9d4210a80db",
+            "0x1", // dummy private key, in impersonation it is not actually used for signing
+        );
+    });
 
     before("restart the state", async function () {
         await devnetProvider.restart();
@@ -30,6 +37,7 @@ describe("Account impersonation", function () {
         // Later, the contract is interacted with using an impersonated account.
         const predeployedAccount = await getPredeployedAccount(devnetProvider, starknetProvider);
 
+        const contractArtifact = getContractArtifact("test/data/simple.sierra");
         const contractDeployment = await predeployedAccount.declareAndDeploy({
             contract: contractArtifact,
             compiledClassHash: "0x63b33a5f2f46b1445d04c06d7832c48c48ad087ce0803b71f2b8d96353716ca",
