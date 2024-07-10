@@ -31,6 +31,9 @@ jobs:
                   name: Lint
                   command: npm run lint-check
             - run:
+                  name: Check all tests executed
+                  command: npm run check-all-tests-executed
+            - run:
                   name: Spawn Devnet
                   command: |
                       docker run -d --network host --name devnet \

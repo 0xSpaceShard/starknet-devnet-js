@@ -15,7 +15,8 @@
         "format": "prettier --log-level log --write \"**/*.{ts,js,md,yml,json}\"",
         "format-check": "prettier --log-level log --check \"**/*.{ts,js,md,yml,json}\"",
         "lint": "eslint $(git ls-files '*.ts') --cache --fix",
-        "lint-check": "eslint $(git ls-files '*.ts') --cache"
+        "lint-check": "eslint $(git ls-files '*.ts') --cache",
+        "check-all-tests-executed": "! grep '\\(describe\\|it\\)\\.only(' $(git ls-files '*.ts')"
     },
     "author": "SpaceShard",
     "repository": "github:0xSpaceShard/starknet-devnet-js",
