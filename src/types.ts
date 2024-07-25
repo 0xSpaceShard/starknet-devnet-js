@@ -32,3 +32,12 @@ export class DevnetProviderError extends Error {
         throw new Error(`Cannot create a DevnetProviderError from ${err}`);
     }
 }
+
+export class DevnetError extends Error {
+    constructor(msg: string) {
+        super(msg);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, DevnetError.prototype);
+    }
+}

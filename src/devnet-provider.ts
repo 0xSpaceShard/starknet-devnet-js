@@ -6,7 +6,9 @@ import { BalanceUnit, DevnetProviderError, PredeployedAccount } from "./types";
 
 /** milliseconds */
 const DEFAULT_HTTP_TIMEOUT = 30_000;
-const DEFAULT_DEVNET_URL = "http://127.0.0.1:5050";
+export const DEFAULT_DEVNET_HOST = "127.0.0.1";
+export const DEFAULT_DEVNET_PORT = 5050;
+const DEFAULT_DEVNET_URL = `http://${DEFAULT_DEVNET_HOST}:${DEFAULT_DEVNET_PORT}`;
 
 export type DevnetProviderConfig = {
     url?: string;
