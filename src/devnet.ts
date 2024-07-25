@@ -1,7 +1,13 @@
 import { ChildProcess, spawn as spawnChildProcess } from "child_process";
-import { DevnetProvider, DEFAULT_DEVNET_PORT, DEFAULT_DEVNET_HOST } from "./devnet-provider";
+import { DevnetProvider } from "./devnet-provider";
 import { DevnetError } from "./types";
 import { isFreePort, sleep } from "./util";
+import {
+    DEFAULT_DEVNET_HOST,
+    DEFAULT_DEVNET_PORT,
+    LATEST_COMPATIBLE_DEVNET_VERSION,
+} from "./constants";
+import { VersionHandler } from "./version-handler";
 
 export interface DevnetConfig {
     args?: string[];
@@ -74,10 +80,22 @@ export class Devnet {
         public provider: DevnetProvider,
     ) {}
 
+    /**
+     * Assumes there is a `starknet-devnet` present in the environment and executes it.
+     * @param config an object for configuring Devnet
+     * @returns a newly spawned Devnet instance
+     */
     static async spawn(config: DevnetConfig = {}): Promise<Devnet> {
         return this.spawnCommand("starknet-devnet", config);
     }
 
+    /**
+     * Spawns a new Devnet using the provided command and optional args in `config`.
+     * If you don't have a local Devnet, but know the version you would like to run, use {@link spawnCommand}.
+     * @param command the command used for starting Devnet; can be a path
+     * @param config configuration object
+     * @returns a newly spawned Devnet instance
+     */
     static async spawnCommand(command: string, config: DevnetConfig = {}): Promise<Devnet> {
         const args = config.args || [];
         const devnetUrl = await ensureUrl(args);
@@ -92,13 +110,31 @@ export class Devnet {
         // store it now to ensure it's cleaned up automatically if the remaining steps fail
         Devnet.instances.push(devnetInstance);
 
-        await ensureAlive(devnetInstance.provider, config?.maxStartupMillis ?? 5000);
-        return devnetInstance;
+        return new Promise((resolve, reject) => {
+            const maxStartupMillis = config?.maxStartupMillis ?? 5000;
+            ensureAlive(devnetInstance.provider, maxStartupMillis).then(() =>
+                resolve(devnetInstance),
+            );
+            devnetProcess.on("error", function (e) {
+                reject(e);
+            });
+        });
     }
 
-    static async spawnVersion(_version: string, _config: DevnetConfig = {}): Promise<Devnet> {
-        // get the right artifact according to platform and os
-        throw new Error("Not implemented");
+    /**
+     * Spawns a Devnet of the provided version. If not present locally, fetches it.
+     * If you already have a local Devnet you would like to run, use {@link spawnCommand}.
+     * @param version if set to `"latest"`, uses the latest Devnet version compatible with this library;
+     *     otherwise needs to be a semver string with a prepended "v" (e.g. "v1.2.3") and
+     *     should be available in https://github.com/0xSpaceShard/starknet-devnet-rs/releases
+     * @param config configuration object
+     * @returns a newly spawned Devnet instance
+     */
+    static async spawnVersion(version: string, config: DevnetConfig = {}): Promise<Devnet> {
+        version = version === "latest" ? LATEST_COMPATIBLE_DEVNET_VERSION : version;
+
+        const command = await VersionHandler.getExecutable(version);
+        return this.spawnCommand(command, config);
     }
 
     /**

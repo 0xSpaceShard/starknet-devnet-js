@@ -12,7 +12,7 @@ jobs:
         environment:
             DEVNET_VERSION: "0.1.2"
             DEVNET_DIR: "/tmp"
-            DEVNET_PATH: "/tmp/starknet-devnet"
+            DEVNET_PATH: "/tmp/devnet-ci-storage"
             FORKED_DEVNET_PORT: 5051
         steps:
             - checkout

@@ -24,7 +24,7 @@ export class DevnetProviderError extends Error {
 
     public static fromAxiosError(err: AxiosError) {
         if (err.code === AxiosError.ECONNABORTED) {
-            return new DevnetProviderError(
+            return new this(
                 `${err.message}. Try specifying a greater timeout in DevnetProvider({...})`,
             );
         }
@@ -36,6 +36,15 @@ export class DevnetProviderError extends Error {
 export class DevnetError extends Error {
     constructor(msg: string) {
         super(msg);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, DevnetError.prototype);
+    }
+}
+
+export class GithubError extends Error {
+    constructor(msg: string) {
+        super(`Unexpected response from GitHub: ${msg}`);
 
         // Set the prototype explicitly.
         Object.setPrototypeOf(this, DevnetError.prototype);
