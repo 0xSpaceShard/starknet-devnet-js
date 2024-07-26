@@ -20,7 +20,7 @@ This library is compatible with stable Devnet versions in the inclusive range: `
 
 ## Spawn a new Devnet
 
-This library allows you to spawn a Devnet instance inside your script, without a separate terminal. It finds a free random free port, and releases all used resources on exit.
+This library allows you to spawn a Devnet instance inside your program, without a separate terminal. It finds a free random free port, and releases all used resources on exit.
 
 ### Spawn a version without manual installation
 
@@ -61,7 +61,7 @@ const devnet = await Devnet.spawnInstalled({ args: ["--predeployed-accounts", "3
 
 ### Redirect the output
 
-By default, the spawned Devnet inherits the output streams of the main JS program in which it is invoked. If you invoke your program in a terminal without any stream redirections, it will print Devnet logs in that same terminal together with your program output. This can be overriden:
+By default, the spawned Devnet inherits the output streams of the main program in which it is invoked. If you invoke your program in a terminal without any stream redirections, it will print Devnet logs in that same terminal together with your program output. This can be overriden:
 
 ```typescript
 import fs from "fs";
@@ -83,6 +83,15 @@ If you have a custom build of Devnet or have multiple custom versions present lo
 const devnet = await Devnet.spawnCommand("my-devnet-command");
 // or specify the path
 const devnet = await Devnet.spawnCommand("/path/to/my-devnet-command");
+```
+
+### Killing
+
+Even though the Devnet subprocess automatically exits and releases the used resources on program end, you can send it a signal as needed:
+
+```typescript
+const devnet = await Devnet.spawnInstalled();
+devnet.kill(...); // defaults to SIGTERM
 ```
 
 ## Connect to a running instance
