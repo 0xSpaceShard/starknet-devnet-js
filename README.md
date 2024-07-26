@@ -106,12 +106,18 @@ console.log(await devnet.isAlive()); // true
 
 ## Enabling Starknet API support
 
-Since this library only supports the [Devnet-specific API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/):
+Since this library only supports the [Devnet-specific API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/).
+
+E.g. to get the latest block after spawning Devnet, you would need to do:
 
 ```typescript
+import { Devnet } from "starknet-devnet";
 import * as starknet from "starknet";
+
 const devnet = await Devnet.spawnInstalled();
 const starknetProvider = new starknet.RpcProvider({ nodeUrl: devnet.provider.url });
+
+const block = await starknetProvider.getBlock("latest");
 ```
 
 ## L1-L2 communication
