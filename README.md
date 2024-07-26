@@ -37,7 +37,7 @@ async function main() {
 }
 ```
 
-To use the latest version:
+To use the latest compatible version:
 
 ```typescript
 const devnet = await Devnet.spawnVersion("latest");
@@ -80,14 +80,14 @@ If you have a custom build of Devnet or have multiple custom versions present lo
 
 ```typescript
 // provide the command
-const devnet = await Devnet.spawnCommand("my-devnet-command");
+const devnet = await Devnet.spawnCommand("my-devnet-command", { ... });
 // or specify the path
-const devnet = await Devnet.spawnCommand("/path/to/my-devnet-command");
+const devnet = await Devnet.spawnCommand("/path/to/my-devnet-command", { ... });
 ```
 
 ### Killing
 
-Even though the Devnet subprocess automatically exits and releases the used resources on program end, you can send it a signal as needed:
+Even though the Devnet subprocess automatically exits and releases the used resources on program end, you can send it a signal if needed:
 
 ```typescript
 const devnet = await Devnet.spawnInstalled();
@@ -96,15 +96,22 @@ devnet.kill(...); // defaults to SIGTERM
 
 ## Connect to a running instance
 
-If there already is a running Devnet instance (e.g. in another terminal or in another JS/TS program), you can simply connect to it by importing `DevnetProvider`. [Read more about different ways of running Devnet](https://0xspaceshard.github.io/starknet-devnet-rs/docs/category/running).
+If there already is a running Devnet instance (e.g. in another terminal or in another JS/TS program), you can simply connect to it by importing `DevnetProvider`. [Read more](https://0xspaceshard.github.io/starknet-devnet-rs/docs/category/running) about different ways of running Devnet.
 
 ```typescript
 import { DevnetProvider } from "starknet-devnet";
+const devnet = new DevnetProvider(); // accepts an optional configuration object
+console.log(await devnet.isAlive()); // true
+```
 
-async function helloDevnet() {
-    const devnet = new DevnetProvider(); // accepts an optional configuration object
-    console.log(await devnet.isAlive()); // true
-}
+## Enabling Starknet API support
+
+Since this library only supports the [Devnet-specific API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/):
+
+```typescript
+import * as starknet from "starknet";
+const devnet = await Devnet.spawnInstalled();
+const starknetProvider = new starknet.RpcProvider({ nodeUrl: devnet.provider.url });
 ```
 
 ## L1-L2 communication
