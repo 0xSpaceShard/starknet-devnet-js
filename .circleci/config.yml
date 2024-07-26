@@ -10,6 +10,10 @@ jobs:
             image: ubuntu-2204:2024.01.2
         resource_class: xlarge
         environment:
+            DEVNET_VERSION: "0.1.2"
+            DEVNET_DIR: "/tmp/devnet-ci-storage"
+            # to avoid definition complications, when updating DEVNET_DIR, always update DEVNET_PATH (should be prefix)
+            DEVNET_PATH: "/tmp/devnet-ci-storage/starknet-devnet"
             FORKED_DEVNET_PORT: 5051
         steps:
             - checkout
@@ -37,12 +41,18 @@ jobs:
                   name: Spawn Devnet
                   command: |
                       docker run -d --network host --name devnet \
-                        shardlabs/starknet-devnet-rs:0.1.2 --state-archive-capacity full --dump-on exit --dump-path "dummy.dump.json"
+                        shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --state-archive-capacity full --dump-on exit --dump-path "dummy.dump.json"
             - run:
                   name: Spawn Devnet forked from Mainnet
                   command: |
                       docker run -d --network host --name forked-devnet \
-                        shardlabs/starknet-devnet-rs:0.1.2 --port ${FORKED_DEVNET_PORT} --fork-network https://free-rpc.nethermind.io/mainnet-juno/v0_7
+                        shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --port ${FORKED_DEVNET_PORT} --fork-network https://free-rpc.nethermind.io/mainnet-juno/v0_7
+            - run:
+                  name: Download precompiled Devnet
+                  command: |
+                      URL=https://github.com/0xSpaceShard/starknet-devnet-rs/releases/download/v${DEVNET_VERSION}/starknet-devnet-x86_64-unknown-linux-gnu.tar.gz
+                      mkdir -p ${DEVNET_DIR}
+                      curl -sSfL ${URL} | tar -xvz -C ${DEVNET_DIR}
             - run:
                   name: Spawn Anvil
                   command: |

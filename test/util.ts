@@ -34,6 +34,10 @@ export function getEnvVar(varName: string): string {
     throw new Error(`Environment variable not defined: ${varName}`);
 }
 
+export async function sleep(millis: number): Promise<void> {
+    await new Promise((resolve, _) => setTimeout(resolve, millis));
+}
+
 export const ETH_TOKEN_CONTRACT_ADDRESS =
     "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7";
 export const STRK_TOKEN_CONTRACT_ADDRESS =

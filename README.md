@@ -2,7 +2,7 @@
 
 # Introduction
 
-Using this JavaScript/TypeScript library, you can interact with [Starknet Devnet](https://github.com/0xSpaceShard/starknet-devnet-rs/) via its specific [Devnet API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api). To interact with any Starknet node or network (including Starknet Devnet) via the [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), see [starknet.js](https://www.starknetjs.com/).
+Using this JavaScript/TypeScript library, you can spawn [Starknet Devnet](https://github.com/0xSpaceShard/starknet-devnet-rs/) without installing and running it in a separate terminal. You can interact with it via its specific [Devnet API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api). To interact with any Starknet node or network (including Starknet Devnet) via the [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), see [starknet.js](https://www.starknetjs.com/).
 
 # Installation
 
@@ -14,28 +14,119 @@ $ npm i starknet-devnet
 
 This library is compatible with stable Devnet versions in the inclusive range: `v0.1.1`-`v0.1.2`.
 
-[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed in [the tests](./test/util.ts#L53)
+[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance function](./test/util.ts#L57)
 
 # Usage
 
-The main export of this package is `DevnetProvider`. Assuming you have a [running Devnet](https://0xspaceshard.github.io/starknet-devnet-rs/docs/category/running), simply import `DevnetProvider` in your JS/TS program and interact with the Devnet instance:
+## Spawn a new Devnet
+
+This library allows you to spawn a Devnet instance inside your program, without a separate terminal. It finds a free random free port, and releases all used resources on exit.
+
+### Spawn a version without manual installation
+
+Assuming your machine has a supported OS (macOS or Linux) and supported architecture (arm64/aarch64 or x64/x86_64), using `Devnet.spawnVersion` will quickly install and spawn a new Devnet.
+
+```typescript
+import { Devnet } from "starknet-devnet";
+
+async function main() {
+    // Specify anything from https://github.com/0xSpaceShard/starknet-devnet-rs/releases
+    // Be sure to include the 'v' if it's in the version name.
+    const devnet = await Devnet.spawnVersion("v0.1.2");
+    console.log(await devnet.provider.isAlive()); // true
+}
+```
+
+To use the latest compatible version:
+
+```typescript
+const devnet = await Devnet.spawnVersion("latest");
+```
+
+### Spawn an already installed Devnet
+
+Assuming you have already installed Devnet and it is present in your environment's `PATH`, simply run:
+
+```typescript
+const devnet = await Devnet.spawnInstalled();
+```
+
+### Specify Devnet arguments
+
+You can use the same CLI arguments you would pass to a Devnet running in a terminal:
+
+```typescript
+const devnet = await Devnet.spawnInstalled({ args: ["--predeployed-accounts", "3"] });
+```
+
+### Redirect the output
+
+By default, the spawned Devnet inherits the output streams of the main program in which it is invoked. If you invoke your program in a terminal without any stream redirections, it will print Devnet logs in that same terminal together with your program output. This can be overriden:
+
+```typescript
+import fs from "fs";
+const outputStream = fs.createWriteStream("devnet-out.txt");
+const devnet = await Devnet.spawnInstalled({
+    stdout: outputStream,
+    stderr: ...,
+});
+// do stuff with devnet and then close the stream
+outputStream.end();
+```
+
+### Spawn a custom build
+
+If you have a custom build of Devnet or have multiple custom versions present locally:
+
+```typescript
+// provide the command
+const devnet = await Devnet.spawnCommand("my-devnet-command", { ... });
+// or specify the path
+const devnet = await Devnet.spawnCommand("/path/to/my-devnet-command", { ... });
+```
+
+### Killing
+
+Even though the Devnet subprocess automatically exits and releases the used resources on program end, you can send it a signal if needed:
+
+```typescript
+const devnet = await Devnet.spawnInstalled();
+devnet.kill(...); // defaults to SIGTERM
+```
+
+## Connect to a running instance
+
+If there already is a running Devnet instance (e.g. in another terminal or in another JS/TS program), you can simply connect to it by importing `DevnetProvider`. [Read more](https://0xspaceshard.github.io/starknet-devnet-rs/docs/category/running) about different ways of running Devnet.
 
 ```typescript
 import { DevnetProvider } from "starknet-devnet";
+const devnet = new DevnetProvider(); // accepts an optional configuration object
+console.log(await devnet.isAlive()); // true
+```
 
-async function helloDevnet() {
-    const devnet = new DevnetProvider(); // accepts an optional configuration object
-    console.log(await devnet.isAlive()); // true
-}
+## Enabling Starknet API support
+
+Since this library only supports the [Devnet-specific API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/).
+
+E.g. to get the latest block after spawning Devnet, you would need to do:
+
+```typescript
+import { Devnet } from "starknet-devnet";
+import * as starknet from "starknet";
+
+const devnet = await Devnet.spawnInstalled();
+const starknetProvider = new starknet.RpcProvider({ nodeUrl: devnet.provider.url });
+
+const block = await starknetProvider.getBlock("latest");
 ```
 
 ## L1-L2 communication
 
-Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman).
+Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/postman.test.ts) for more info.
 
 ## Examples
 
-See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for usage examples.
+See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for more usage examples.
 
 ## Contribute
 
@@ -43,4 +134,4 @@ If you spot a problem or room for improvement, check if an issue for it [already
 
 ### Test
 
-Before running the tests with `npm test`, follow the steps defined in the [CI/CD config file](.circleci/config.yml). If your test relies on environment variables, load them with `getEnvVar`. Conversely, to find all environment variables that need to be set, search the repo for `getEnvVar`.
+Before running the tests with `npm test`, follow the steps defined in the [CI/CD config file](.circleci/config.yml). If your new test relies on environment variables, load them with `getEnvVar`. Conversely, to find all environment variables that need to be set before running existing tests, search the repo for `getEnvVar`.
