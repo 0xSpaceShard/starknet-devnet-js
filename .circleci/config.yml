@@ -11,8 +11,9 @@ jobs:
         resource_class: xlarge
         environment:
             DEVNET_VERSION: "0.1.2"
-            DEVNET_DIR: "/tmp"
-            DEVNET_PATH: "/tmp/devnet-ci-storage"
+            DEVNET_DIR: "/tmp/devnet-ci-storage"
+            # to avoid definition complications, when updating DEVNET_DIR, always update DEVNET_PATH (should be prefix)
+            DEVNET_PATH: "/tmp/devnet-ci-storage/starknet-devnet"
             FORKED_DEVNET_PORT: 5051
         steps:
             - checkout
@@ -50,6 +51,7 @@ jobs:
                   name: Download precompiled Devnet
                   command: |
                       URL=https://github.com/0xSpaceShard/starknet-devnet-rs/releases/download/v${DEVNET_VERSION}/starknet-devnet-x86_64-unknown-linux-gnu.tar.gz
+                      mkdir -p ${DEVNET_DIR}
                       curl -sSfL ${URL} | tar -xvz -C ${DEVNET_DIR}
             - run:
                   name: Spawn Anvil
