@@ -41,6 +41,7 @@
         "@types/chai": "^4.2.22",
         "@types/mocha": "^9.1.1",
         "@types/node": "^20.3.1",
+        "@types/tmp": "^0.2.6",
         "@typescript-eslint/eslint-plugin": "^7.13.1",
         "chai": "^4.3.7",
         "eslint": "^8.57.0",
@@ -48,6 +49,7 @@
         "mocha": "^10.2.0",
         "prettier-eslint": "^16.3.0",
         "starknet": "~6.9.0",
+        "tmp": "^0.2.3",
         "ts-node": "^10.9.1",
         "typescript": "^5.0.4"
     }

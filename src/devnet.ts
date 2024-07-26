@@ -1,4 +1,4 @@
-import { ChildProcess, spawn as spawnChildProcess, StdioOptions } from "child_process";
+import { ChildProcess, spawn as spawnChildProcess } from "child_process";
 import { DevnetProvider } from "./devnet-provider";
 import { DevnetError } from "./types";
 import { isFreePort, sleep } from "./util";
@@ -8,10 +8,12 @@ import {
     LATEST_COMPATIBLE_DEVNET_VERSION,
 } from "./constants";
 import { VersionHandler } from "./version-handler";
+import { Stream } from "stream";
 
 export interface DevnetConfig {
     args?: string[];
-    stdio?: StdioOptions;
+    stdout?: "inherit" | Stream | number;
+    stderr?: "inherit" | Stream | number;
     maxStartupMillis?: number;
 }
 
@@ -27,7 +29,7 @@ async function ensureUrl(args: string[]): Promise<string> {
     const hostParamIndex = args.indexOf("--host");
     if (hostParamIndex === -1) {
         host = DEFAULT_DEVNET_HOST;
-        args.push(...["--host", host]);
+        args.push("--host", host);
     } else {
         host = args[hostParamIndex + 1];
     }
@@ -36,7 +38,7 @@ async function ensureUrl(args: string[]): Promise<string> {
     const portParamIndex = args.indexOf("--port");
     if (portParamIndex === -1) {
         port = await getFreePort();
-        args.push(...["--port", port]);
+        args.push("--port", port);
     } else {
         port = args[portParamIndex + 1];
     }
@@ -86,7 +88,7 @@ export class Devnet {
 
         const devnetProcess = spawnChildProcess(command, args, {
             detached: true,
-            stdio: config.stdio || "inherit",
+            stdio: [undefined, config.stdout || "inherit", config.stderr || "inherit"],
         });
         devnetProcess.unref();
 
@@ -145,7 +147,8 @@ The output location is configurable via the config object passed to the Devnet s
     }
 
     /**
-     * Sends the provided signal to the underlying Devnet process.
+     * Sends the provided signal to the underlying Devnet process. Keep in mind
+     * that the process is killed automatically on program exit.
      * @param signal the signal to be sent; deaults to `SIGTERM`
      * @returns `true` if successful; `false` otherwise
      */

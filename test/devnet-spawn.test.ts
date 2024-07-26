@@ -2,6 +2,8 @@ import { assert, expect } from "chai";
 import { Devnet, DevnetProvider, GithubError } from "..";
 import { getEnvVar, sleep } from "./util";
 import path from "path";
+import tmp from "tmp";
+import fs from "fs";
 
 describe("Spawnable Devnet", function () {
     this.timeout(5000);
@@ -79,8 +81,45 @@ describe("Spawnable Devnet", function () {
         }
     });
 
+    it("should log errors to a file", async function () {
+        const stdoutFile = tmp.fileSync();
+        const stderrFile = tmp.fileSync();
+        try {
+            await Devnet.spawnCommand(devnetPath, {
+                args: ["--faulty-param", "123"],
+                stdout: stdoutFile.fd,
+                stderr: stderrFile.fd,
+            });
+            assert.fail("Should have failed earlier");
+        } catch (err) {
+            const stdoutContent = fs.readFileSync(stdoutFile.name).toString();
+            expect(stdoutContent).to.be.empty;
+
+            const stderrContent = fs.readFileSync(stderrFile.name).toString();
+            expect(stderrContent).to.contain("unexpected argument '--faulty-param'");
+        }
+    });
+
+    it("should log non-error output to a file", async function () {
+        const stdoutFile = tmp.fileSync();
+        const stderrFile = tmp.fileSync();
+
+        const dummyPort = 1234; // assuming it's free
+        await Devnet.spawnCommand(devnetPath, {
+            args: ["--port", dummyPort.toString()],
+            stdout: stdoutFile.fd,
+            stderr: stderrFile.fd,
+        });
+
+        const stdoutContent = fs.readFileSync(stdoutFile.name).toString();
+        expect(stdoutContent).to.contain(`Starknet Devnet listening on 127.0.0.1:${dummyPort}`);
+
+        const stderrContent = fs.readFileSync(stderrFile.name).toString();
+        expect(stderrContent).to.be.empty;
+    });
+
     it("should use the specified ports", async function () {
-        const dummyPort = 1234;
+        const dummyPort = 2345; // assuming it's free
 
         const provider = new DevnetProvider({ url: `http://127.0.0.1:${dummyPort}` });
         expect(await provider.isAlive()).to.be.false;
