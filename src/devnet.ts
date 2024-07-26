@@ -71,17 +71,17 @@ export class Devnet {
     ) {}
 
     /**
-     * Assumes `starknet-devnet` is installed and present in the environment PATH and executes it.
+     * Assumes `starknet-devnet` is installed and present in the environment PATH and executes it, using the args provided in `config`.
      * @param config an object for configuring Devnet
      * @returns a newly spawned Devnet instance
      */
-    static async spawnDefaultCommand(config: DevnetConfig = {}): Promise<Devnet> {
+    static async spawnInstalled(config: DevnetConfig = {}): Promise<Devnet> {
         return this.spawnCommand("starknet-devnet", config);
     }
 
     /**
      * Spawns a new Devnet using the provided command and optional args in `config`.
-     * If you don't have a local Devnet, but know the version you would like to run, use {@link spawnVersion}.
+     * The `command` can be an absolute or a relative path, or a command in your environment's PATH.
      * @param command the command used for starting Devnet; can be a path
      * @param config configuration object
      * @returns a newly spawned Devnet instance
@@ -119,7 +119,8 @@ The output location is configurable via the config object passed to the Devnet s
     }
 
     /**
-     * Spawns a Devnet of the provided version. If not present locally, fetches it.
+     * Spawns a Devnet of the provided `version` using the parameters provided in `config`.
+     * If not present locally, a precompiled version is fetched, extracted and executed.
      * If you already have a local Devnet you would like to run, use {@link spawnCommand}.
      * @param version if set to `"latest"`, uses the latest Devnet version compatible with this library;
      *     otherwise needs to be a semver string with a prepended "v" (e.g. "v1.2.3") and

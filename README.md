@@ -48,7 +48,7 @@ const devnet = await Devnet.spawnVersion("latest");
 Assuming you have already installed Devnet and it is present in your environment's `PATH`, simply run:
 
 ```typescript
-const devnet = await Devnet.spawnDefaultCommand();
+const devnet = await Devnet.spawnInstalled();
 ```
 
 ### Specify Devnet arguments
@@ -56,7 +56,7 @@ const devnet = await Devnet.spawnDefaultCommand();
 You can use the same CLI arguments you would pass to a Devnet running in a terminal:
 
 ```typescript
-const devnet = await Devnet.spawnVersion("v0.1.2", { args: ["--predeployed-accounts", "3"] });
+const devnet = await Devnet.spawnInstalled({ args: ["--predeployed-accounts", "3"] });
 ```
 
 ### Redirect the output
@@ -66,7 +66,7 @@ By default, the spawned Devnet inherits the output streams of the main JS progra
 ```typescript
 import fs from "fs";
 const outputStream = fs.createWriteStream("devnet-out.txt");
-const devnet = await Devnet.spawnVersion("v0.1.2", {
+const devnet = await Devnet.spawnInstalled({
     stdout: outputStream,
     stderr: ...,
 });
