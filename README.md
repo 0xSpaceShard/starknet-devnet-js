@@ -70,6 +70,7 @@ const devnet = await Devnet.spawnVersion("v0.1.2", {
     stdout: outputStream,
     stderr: ...,
 });
+// do stuff with devnet and then close the stream
 outputStream.end();
 ```
 
@@ -99,11 +100,11 @@ async function helloDevnet() {
 
 ## L1-L2 communication
 
-Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman).
+Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/postman.test.ts) for more info.
 
 ## Examples
 
-See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for usage examples.
+See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for more usage examples.
 
 ## Contribute
 
@@ -111,4 +112,4 @@ If you spot a problem or room for improvement, check if an issue for it [already
 
 ### Test
 
-Before running the tests with `npm test`, follow the steps defined in the [CI/CD config file](.circleci/config.yml). If your test relies on environment variables, load them with `getEnvVar`. Conversely, to find all environment variables that need to be set, search the repo for `getEnvVar`.
+Before running the tests with `npm test`, follow the steps defined in the [CI/CD config file](.circleci/config.yml). If your new test relies on environment variables, load them with `getEnvVar`. Conversely, to find all environment variables that need to be set before running existing tests, search the repo for `getEnvVar`.
