@@ -10,10 +10,12 @@ import {
 import { VersionHandler } from "./version-handler";
 import { Stream } from "stream";
 
+export type DevnetOutput = "inherit" | Stream | number;
+
 export interface DevnetConfig {
     args?: string[];
-    stdout?: "inherit" | Stream | number;
-    stderr?: "inherit" | Stream | number;
+    stdout?: DevnetOutput;
+    stderr?: DevnetOutput;
     maxStartupMillis?: number;
 }
 
