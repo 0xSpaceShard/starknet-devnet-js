@@ -32,7 +32,7 @@ describe("Spawnable Devnet", function () {
         process.env.PATH += `:${devnetDir}`;
 
         // command expects Devnet to be available in PATH
-        const devnet = await Devnet.spawn();
+        const devnet = await Devnet.spawnDefaultCommand();
         expect(await devnet.provider.isAlive()).to.be.true;
     });
 

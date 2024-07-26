@@ -69,11 +69,11 @@ export class Devnet {
     ) {}
 
     /**
-     * Assumes there is a `starknet-devnet` present in the environment and executes it.
+     * Assumes `starknet-devnet` is installed and present in the environment PATH and executes it.
      * @param config an object for configuring Devnet
      * @returns a newly spawned Devnet instance
      */
-    static async spawn(config: DevnetConfig = {}): Promise<Devnet> {
+    static async spawnDefaultCommand(config: DevnetConfig = {}): Promise<Devnet> {
         return this.spawnCommand("starknet-devnet", config);
     }
 
