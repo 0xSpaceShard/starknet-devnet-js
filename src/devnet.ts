@@ -1,4 +1,4 @@
-import { ChildProcess, spawn as spawnChildProcess } from "child_process";
+import { ChildProcess, spawn as spawnChildProcess, StdioOptions } from "child_process";
 import { DevnetProvider } from "./devnet-provider";
 import { DevnetError } from "./types";
 import { isFreePort, sleep } from "./util";
@@ -11,7 +11,7 @@ import { VersionHandler } from "./version-handler";
 
 export interface DevnetConfig {
     args?: string[];
-    output?: string;
+    stdio?: StdioOptions;
     maxStartupMillis?: number;
 }
 
@@ -42,22 +42,6 @@ async function ensureUrl(args: string[]): Promise<string> {
     }
 
     return `http://${host}:${port}`;
-}
-
-async function ensureAlive(provider: DevnetProvider, maxStartupMillis: number): Promise<void> {
-    const checkPeriod = 100; // ms
-    const maxIterations = maxStartupMillis / checkPeriod;
-
-    for (let i = 0; i < maxIterations; ++i) {
-        if (await provider.isAlive()) {
-            return;
-        }
-        await sleep(checkPeriod);
-    }
-
-    throw new DevnetError(
-        "Could not spawn Devnet! Ensure that you can spawn using the chosen method or increase the startup time.",
-    );
 }
 
 async function getFreePort(): Promise<string> {
@@ -102,7 +86,7 @@ export class Devnet {
 
         const devnetProcess = spawnChildProcess(command, args, {
             detached: true,
-            stdio: "inherit",
+            stdio: config.stdio || "inherit",
         });
         devnetProcess.unref();
 
@@ -112,11 +96,18 @@ export class Devnet {
 
         return new Promise((resolve, reject) => {
             const maxStartupMillis = config?.maxStartupMillis ?? 5000;
-            ensureAlive(devnetInstance.provider, maxStartupMillis).then(() =>
-                resolve(devnetInstance),
-            );
+            devnetInstance.ensureAlive(maxStartupMillis).then(() => resolve(devnetInstance));
+
             devnetProcess.on("error", function (e) {
                 reject(e);
+            });
+
+            devnetProcess.on("exit", function () {
+                if (devnetProcess.exitCode) {
+                    reject(`Devnet exited with code ${devnetProcess.exitCode}. \
+Check Devnet's logged output for more info. \
+The output location is configurable via the config object passed to the Devnet spawning method.`);
+                }
             });
         });
     }
@@ -135,6 +126,22 @@ export class Devnet {
 
         const command = await VersionHandler.getExecutable(version);
         return this.spawnCommand(command, config);
+    }
+
+    private async ensureAlive(maxStartupMillis: number): Promise<void> {
+        const checkPeriod = 100; // ms
+        const maxIterations = maxStartupMillis / checkPeriod;
+
+        for (let i = 0; !this.process.exitCode && i < maxIterations; ++i) {
+            if (await this.provider.isAlive()) {
+                return;
+            }
+            await sleep(checkPeriod);
+        }
+
+        throw new DevnetError(
+            "Could not spawn Devnet! Ensure that you can spawn using the chosen method or increase the startup time.",
+        );
     }
 
     /**

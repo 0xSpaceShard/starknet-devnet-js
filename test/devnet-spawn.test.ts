@@ -3,7 +3,7 @@ import { Devnet, DevnetProvider, GithubError } from "..";
 import { getEnvVar, sleep } from "./util";
 import path from "path";
 
-describe("Devnet", function () {
+describe("Spawnable Devnet", function () {
     this.timeout(5000);
 
     let devnetPath: string;
@@ -66,6 +66,16 @@ describe("Devnet", function () {
             assert.fail("Should have failed earlier");
         } catch (err) {
             expect(err).to.have.property("code").equal("ENOENT");
+        }
+    });
+
+    it("should fail if invalid CLI param", async function () {
+        try {
+            await Devnet.spawnCommand(devnetPath, { args: ["--faulty-param", "123"] });
+            assert.fail("Should have failed earlier");
+        } catch (err) {
+            expect(err).to.contain("Devnet exited");
+            expect(err).to.contain("Check Devnet's logged output");
         }
     });
 
