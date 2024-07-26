@@ -4,8 +4,7 @@ import fs from "fs";
 import os from "os";
 import { DEFAULT_HTTP_TIMEOUT } from "./constants";
 import { DevnetError, GithubError } from "./types";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const decompress = require("decompress");
+import decompress from "decompress";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const decompressTargz = require("decompress-targz");
 
