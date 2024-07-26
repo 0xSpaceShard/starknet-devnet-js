@@ -13,9 +13,11 @@ import { Stream } from "stream";
 export type DevnetOutput = "inherit" | Stream | number;
 
 export interface DevnetConfig {
+    /** The CLI args you would pass to a Devnet run in terminal. */
     args?: string[];
     stdout?: DevnetOutput;
     stderr?: DevnetOutput;
+    /** The maximum amount of time waited for Devnet to start. */
     maxStartupMillis?: number;
 }
 
@@ -79,7 +81,7 @@ export class Devnet {
 
     /**
      * Spawns a new Devnet using the provided command and optional args in `config`.
-     * If you don't have a local Devnet, but know the version you would like to run, use {@link spawnCommand}.
+     * If you don't have a local Devnet, but know the version you would like to run, use {@link spawnVersion}.
      * @param command the command used for starting Devnet; can be a path
      * @param config configuration object
      * @returns a newly spawned Devnet instance
@@ -144,7 +146,8 @@ The output location is configurable via the config object passed to the Devnet s
         }
 
         throw new DevnetError(
-            "Could not spawn Devnet! Ensure that you can spawn using the chosen method or increase the startup time.",
+            "Could not spawn Devnet! Ensure that you can spawn using the chosen method. \
+Alternatively, increase the startup time defined in the config object provided on spawning.",
         );
     }
 
