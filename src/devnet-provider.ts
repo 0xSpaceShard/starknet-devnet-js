@@ -90,7 +90,7 @@ export class DevnetProvider {
         const paramsSerialized = `{
             "address": "${address}",
             "amount": ${amount},
-            "unit": "${unit}",
+            "unit": "${unit}"
         }`;
         const respData = await this.rpcProvider.sendRequest("devnet_mint", paramsSerialized);
 

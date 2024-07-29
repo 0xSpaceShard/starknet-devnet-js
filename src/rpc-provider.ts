@@ -13,11 +13,12 @@ export class RpcProvider {
         const paramsSerialized = typeof params === "string" ? params : JSON.stringify(params);
 
         const jsonRpcBodySerialized = `{
-                "jsonrpc": "2.0",
-                "id": "1",
-                "method": "${method}",
-                "params": ${paramsSerialized},
-            }`;
+            "jsonrpc": "2.0",
+            "id": "1",
+            "method": "${method}",
+            "params": ${paramsSerialized}
+        }`;
+
         return this.httpProvider
             .post(this.url, jsonRpcBodySerialized, {
                 headers: {
