@@ -59,7 +59,7 @@ You can use the same CLI arguments you would pass to a Devnet running in a termi
 const devnet = await Devnet.spawnInstalled({ args: ["--predeployed-accounts", "3"] });
 ```
 
-### Redirect the output
+### Devnet output
 
 By default, the spawned Devnet inherits the output streams of the main program in which it is invoked. If you invoke your program in a terminal without any stream redirections, it will print Devnet logs in that same terminal together with your program output. This can be overriden:
 
@@ -68,11 +68,13 @@ import fs from "fs";
 const outputStream = fs.createWriteStream("devnet-out.txt");
 const devnet = await Devnet.spawnInstalled({
     stdout: outputStream,
-    stderr: ...,
+    stderr: /* what you will, could be the same as stdout */,
 });
 // do stuff with devnet and then close the stream
 outputStream.end();
 ```
+
+To ignore the output completely, specify `{ stdout: "ignore", stderr: "ignore" }`.
 
 ### Spawn a custom build
 

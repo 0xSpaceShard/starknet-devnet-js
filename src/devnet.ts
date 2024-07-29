@@ -10,7 +10,7 @@ import {
 import { VersionHandler } from "./version-handler";
 import { Stream } from "stream";
 
-export type DevnetOutput = "inherit" | Stream | number;
+export type DevnetOutput = "inherit" | "ignore" | Stream | number;
 
 export interface DevnetConfig {
     /** The CLI args you would pass to a Devnet run in terminal. */
