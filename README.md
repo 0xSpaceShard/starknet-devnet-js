@@ -20,7 +20,7 @@ This library is compatible with stable Devnet versions in the inclusive range: `
 
 ## Spawn a new Devnet
 
-This library allows you to spawn a Devnet instance inside your program, without a separate terminal. It finds a free random free port, and releases all used resources on exit.
+This library allows you to spawn a Devnet instance inside your program, without a separate terminal. It finds a random free port, and releases all used resources on exit. You can specify a port of your choice via `args: ["--port", ...]`.
 
 ### Spawn a version without manual installation
 
