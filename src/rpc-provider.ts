@@ -9,12 +9,20 @@ export class RpcProvider {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async sendRequest(method: string, params: unknown = {}): Promise<any> {
-        return this.httpProvider
-            .post(this.url, {
+        // providing a string may be of use in case a bigint needs to be preserved
+        const paramsSerialized = typeof params === "string" ? params : JSON.stringify(params);
+
+        const jsonRpcBodySerialized = `{
                 jsonrpc: "2.0",
                 id: "1",
-                method,
-                params,
+                method: "${method}",
+                params: ${paramsSerialized},
+            }`;
+        return this.httpProvider
+            .post(this.url, jsonRpcBodySerialized, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
             })
             .then((resp) => {
                 if ("result" in resp.data) {
