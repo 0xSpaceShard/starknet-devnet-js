@@ -87,11 +87,12 @@ export class DevnetProvider {
         amount: bigint,
         unit: BalanceUnit = "WEI",
     ): Promise<MintResponse> {
-        const respData = await this.rpcProvider.sendRequest("devnet_mint", {
-            address,
-            amount,
-            unit,
-        });
+        const paramsSerialized = `{
+            "address": "${address}",
+            "amount": ${amount},
+            "unit": "${unit}",
+        }`;
+        const respData = await this.rpcProvider.sendRequest("devnet_mint", paramsSerialized);
 
         return {
             new_balance: BigInt(respData.new_balance),
