@@ -145,7 +145,9 @@ export class DevnetProvider {
      */
     public async abortBlocks(startingBlockHash: string): Promise<AbortedBlocksResponse> {
         return await this.rpcProvider.sendRequest("devnet_abortBlocks", {
-            starting_block_hash: startingBlockHash,
+            starting_block_id: {
+                block_hash: startingBlockHash,
+            },
         });
     }
 
