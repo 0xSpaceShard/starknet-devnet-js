@@ -74,7 +74,7 @@ const devnet = await Devnet.spawnInstalled({
 outputStream.end();
 ```
 
-To track the output in a separate terminal, run:
+To track the output in a separate terminal, open a new terminal and run:
 
 ```
 $ tail -f devnet-out.txt
@@ -108,10 +108,9 @@ To keep the spawned Devnet alive after your program exits, set the `keepAlive` f
 
 ```typescript
 const devnet = await Devnet.spawnInstalled({ keepAlive: true });
-console.log("Devnet listening at", devnet.provider.url);
 ```
 
-In that case, you must take care of the spawned process. E.g. if you wish to kill it, run the following command, substituting `PORT` with your Devnet's port:
+In that case, you must take care of the spawned process. E.g. if you wish to kill it, run the following command, substituting `PORT` with your Devnet's port (the port is logged on Devnet startup, and is also a part of `devnet.provider.url`):
 
 ```
 $ lsof -i :${PORT} | awk 'NR==2{print $2}' | xargs kill
