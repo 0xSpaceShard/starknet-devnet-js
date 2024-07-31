@@ -7,7 +7,7 @@ Using this JavaScript/TypeScript library, you can spawn [Starknet Devnet](https:
 # Installation
 
 ```
-$ npm i starknet-devnet
+npm i starknet-devnet
 ```
 
 # Compatibility
@@ -77,7 +77,7 @@ outputStream.end();
 To track the output in a separate terminal, open a new terminal and run:
 
 ```
-$ tail -f devnet-out.txt
+tail -f devnet-out.txt
 ```
 
 To ignore the output completely, specify `{ stdout: "ignore", stderr: "ignore" }`.
@@ -113,7 +113,7 @@ const devnet = await Devnet.spawnInstalled({ keepAlive: true });
 In that case, you must take care of the spawned process. E.g. if you wish to kill it, run the following command, substituting `PORT` with your Devnet's port (the port is logged on Devnet startup, and is also a part of `devnet.provider.url`):
 
 ```
-$ lsof -i :${PORT} | awk 'NR==2{print $2}' | xargs kill
+lsof -i :${PORT} | awk 'NR==2{print $2}' | xargs kill
 ```
 
 ## Connect to a running instance
