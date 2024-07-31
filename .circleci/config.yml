@@ -61,6 +61,19 @@ jobs:
             - run:
                   name: Test
                   command: npm run test
+            - run:
+                  name: Test keepAlive
+                  command: |
+                      node -e 'require("./dist/devnet").Devnet.spawnVersion("latest", { args: ["--port", "'${PORT}'"] })'
+                      curl -sSfL localhost:${PORT}/is_alive || echo "Ok... expected to be unresponsive"
+
+                      node -e 'require("./dist/devnet").Devnet.spawnVersion("latest", { args: ["--port", "'${PORT}'"], keepAlive: true })'
+                      curl -sSfL localhost:${PORT}/is_alive
+
+                      lsof -i :${PORT} | awk 'NR==2{print $2}' | xargs kill
+                      curl -sSfL localhost:${PORT}/is_alive || echo "Ok... expected to be unresponsive"
+                  environment:
+                      PORT: 9876
     publish:
         docker:
             - image: cimg/node:20.10.0
