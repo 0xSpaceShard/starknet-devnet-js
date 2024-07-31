@@ -64,8 +64,6 @@ jobs:
             - run:
                   name: Test keepAlive
                   command: |
-                      PORT=9876
-
                       node -e 'require("./dist/devnet").Devnet.spawnVersion("latest", { args: ["--port", "'${PORT}'"] })'
                       curl -sSfL localhost:${PORT}/is_alive || echo "Ok... expected to be unresponsive"
 
@@ -74,6 +72,8 @@ jobs:
 
                       lsof -i :${PORT} | awk 'NR==2{print $2}' | xargs kill
                       curl -sSfL localhost:${PORT}/is_alive || echo "Ok... expected to be unresponsive"
+                  environment:
+                      PORT: 9876
     publish:
         docker:
             - image: cimg/node:20.10.0
