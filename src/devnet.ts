@@ -17,8 +17,13 @@ export interface DevnetConfig {
     args?: string[];
     stdout?: DevnetOutput;
     stderr?: DevnetOutput;
-    /** The maximum amount of time waited for Devnet to start. */
+    /** The maximum amount of time waited for Devnet to start. Defaults to 5000 ms. */
     maxStartupMillis?: number;
+    /**
+     * If `false` (default), automatically closes the spawned Devnet on program exit.
+     * Otherwise keeps it alive.
+     */
+    keepAlive?: boolean;
 }
 
 /**
@@ -97,8 +102,11 @@ export class Devnet {
         devnetProcess.unref();
 
         const devnetInstance = new Devnet(devnetProcess, new DevnetProvider({ url: devnetUrl }));
-        // store it now to ensure it's cleaned up automatically if the remaining steps fail
-        Devnet.instances.push(devnetInstance);
+
+        if (!config.keepAlive) {
+            // store it now to ensure it's cleaned up automatically if the remaining steps fail
+            Devnet.instances.push(devnetInstance);
+        }
 
         return new Promise((resolve, reject) => {
             const maxStartupMillis = config?.maxStartupMillis ?? 5000;

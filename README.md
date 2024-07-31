@@ -95,11 +95,26 @@ const devnet = await Devnet.spawnCommand("/path/to/my-devnet-command", { ... });
 
 ### Killing
 
-Even though the Devnet subprocess automatically exits and releases the used resources on program end, you can send it a signal if needed:
+By default, the Devnet subprocess automatically exits and releases the used resources on program end, but you can send it a signal if needed:
 
 ```typescript
 const devnet = await Devnet.spawnInstalled();
 devnet.kill(...); // defaults to SIGTERM
+```
+
+### Keeping alive
+
+To keep the spawned Devnet alive after your program exits, set the `keepAlive` flag:
+
+```typescript
+const devnet = await Devnet.spawnInstalled({ keepAlive: true });
+console.log("Devnet listening at", devnet.provider.url);
+```
+
+In that case, you must take care of the spawned process. E.g. if you wish to kill it, run the following command, substituting `PORT` with your Devnet's port:
+
+```
+$ lsof -i :${PORT} | awk 'NR==2{print $2}' | xargs kill
 ```
 
 ## Connect to a running instance
