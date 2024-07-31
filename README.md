@@ -110,11 +110,14 @@ To keep the spawned Devnet alive after your program exits, set the `keepAlive` f
 const devnet = await Devnet.spawnInstalled({ keepAlive: true });
 ```
 
-In that case, you must take care of the spawned process. E.g. if you wish to kill it, run the following command, substituting `PORT` with your Devnet's port (the port is logged on Devnet startup, and is also a part of `devnet.provider.url`):
+In that case, you must take care of the spawned process after the program exits. To kill it, you need to:
 
-```
-lsof -i :${PORT} | awk 'NR==2{print $2}' | xargs kill
-```
+1. Know the port it is using. It is logged on Devnet startup and is also a part of `devnet.provider.url`.
+2. Kill the process using the port, which you can do:
+
+    a. In JS, by relying on the [cross-port-killer library](https://www.npmjs.com/package/cross-port-killer).
+
+    b. From shell, by executing `lsof -i :<PORT> | awk 'NR==2{print $2}' | xargs kill` (substitute `<PORT>` with yours).
 
 ## Connect to a running instance
 
