@@ -74,6 +74,12 @@ const devnet = await Devnet.spawnInstalled({
 outputStream.end();
 ```
 
+To track the output in a separate terminal, run:
+
+```
+$ tail -f devnet-out.txt
+```
+
 To ignore the output completely, specify `{ stdout: "ignore", stderr: "ignore" }`.
 
 ### Spawn a custom build
