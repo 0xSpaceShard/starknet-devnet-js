@@ -64,8 +64,8 @@ const devnet = await Devnet.spawnInstalled({ args: ["--predeployed-accounts", "3
 By default, the spawned Devnet inherits the output streams of the main program in which it is invoked. If you invoke your program in a terminal without any stream redirections, it will print Devnet logs in that same terminal together with your program output. This can be overriden:
 
 ```typescript
-import fs from "fs";
 const outputStream = fs.createWriteStream("devnet-out.txt");
+await events.once(outputStream, "open"); // necessary if specifying a --port, otherwise omissible
 const devnet = await Devnet.spawnInstalled({
     stdout: outputStream,
     stderr: /* what you will, could be the same as stdout */,
