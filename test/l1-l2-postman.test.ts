@@ -32,9 +32,10 @@ describe("Postman", function () {
     before(async function () {
         await devnetProvider.restart();
 
-        // Load the messaging contract needed for L1-L2 communication. A custom messaging contract
-        // can be deployed, as witnessed in a later test. The contract sources can be found in the
-        // same directory as the artifacts.
+        // Load the messaging contract needed for L1-L2 communication. By omitting the contract
+        // address, we let Devnet deploy it and return one for us. A custom messaging contract
+        // can be deployed and its address provided to the loading function, as witnessed in a
+        // later test. The contract sources can be found in the same directory as the artifacts.
         const messagingLoadResponse = await devnetProvider.postman.loadL1MessagingContract(L1_URL);
         messagingContractAddress = messagingLoadResponse.messaging_contract_address;
 
