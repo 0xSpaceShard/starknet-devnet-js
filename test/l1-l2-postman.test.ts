@@ -1,5 +1,5 @@
 import * as starknet from "starknet";
-import { DevnetProvider } from "../dist";
+import { DevnetProvider } from "..";
 import * as ethers from "ethers";
 import { expect } from "chai";
 import { expectHexEquality, getContractArtifact, getPredeployedAccount } from "./util";
