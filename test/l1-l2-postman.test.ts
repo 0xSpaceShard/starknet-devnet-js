@@ -6,6 +6,7 @@ import { expectHexEquality, getContractArtifact, getPredeployedAccount } from ".
 
 const HEX_REGEX = /^0x[0-9A-Fa-f]+/;
 
+/** Postman is the named of Starknet's L1-L2 messaging utility. */
 describe("Postman", function () {
     this.timeout(60_000); // ms
 
@@ -13,10 +14,11 @@ describe("Postman", function () {
     const devnetProvider = new DevnetProvider();
     const l2Provider = new starknet.RpcProvider({ nodeUrl: devnetProvider.url });
 
-    const L1_URL = "http://127.0.0.1:8545";
-    /** Assumes there is an L1 provider, e.g. anvil:
-     * https://github.com/foundry-rs/foundry/tree/master/crates/anvil
+    /**
+     * Assumes a running L1 provider, e.g. anvil: https://github.com/foundry-rs/foundry/tree/master/crates/anvil
+     * Using the default host and port.
      */
+    const L1_URL = "http://127.0.0.1:8545";
     const l1Provider = new ethers.JsonRpcProvider(L1_URL);
 
     const user = 1n;
@@ -31,8 +33,8 @@ describe("Postman", function () {
         await devnetProvider.restart();
 
         // Load the messaging contract needed for L1-L2 communication. A custom messaging contract
-        // can be deployed, as witnessed in a later test.
-        // The contract sources can be found in the same directory as the artifacts.
+        // can be deployed, as witnessed in a later test. The contract sources can be found in the
+        // same directory as the artifacts.
         const messagingLoadResponse = await devnetProvider.postman.loadL1MessagingContract(L1_URL);
         messagingContractAddress = messagingLoadResponse.messaging_contract_address;
 
@@ -66,8 +68,9 @@ describe("Postman", function () {
         await l1L2Example.waitForDeployment();
     });
 
-    /** Deploy a custom messaging contract if you need to, otherwise letting Devnet deploy one for you
-     *  is enough, as done in the test after this one.
+    /**
+     * Deploy a custom messaging contract if you need to, otherwise letting Devnet deploy one for
+     * you is enough, as done in the before() hook.
      */
     it("should deploy a custom messaging contract", async () => {
         const l1Signer = (await l1Provider.listAccounts())[0];
