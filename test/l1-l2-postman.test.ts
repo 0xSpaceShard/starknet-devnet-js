@@ -30,9 +30,14 @@ describe("Postman", function () {
     before(async function () {
         await devnetProvider.restart();
 
-        l2Account = await getPredeployedAccount(devnetProvider, l2Provider);
-
+        // Load the messaging contract needed for L1-L2 communication. A custom messaging contract
+        // can be deployed, as witnessed in a later test.
         // The contract sources can be found in the same directory as the artifacts.
+        const messagingLoadResponse = await devnetProvider.postman.loadL1MessagingContract(L1_URL);
+        messagingContractAddress = messagingLoadResponse.messaging_contract_address;
+
+        // First deploy the L2 contract.
+        l2Account = await getPredeployedAccount(devnetProvider, l2Provider);
         const l2Sierra = getContractArtifact("test/data/l1_l2.sierra");
         const l2ContractDeployment = await l2Account.declareAndDeploy({
             contract: l2Sierra,
@@ -45,6 +50,7 @@ describe("Postman", function () {
         );
         l2Contract.connect(l2Account);
 
+        // Deploy the L1 contract. It needs to know the messaging contract's address.
         const l1Signers = await l1Provider.listAccounts();
         const l1Signer = l1Signers[0];
 
@@ -54,10 +60,6 @@ describe("Postman", function () {
             l1L2ExampleArtifact.bytecode,
             l1Signer,
         );
-
-        const messagingLoadResponse = await devnetProvider.postman.loadL1MessagingContract(L1_URL);
-        messagingContractAddress = messagingLoadResponse.messaging_contract_address;
-
         l1L2Example = (await l1L2ExampleFactory.deploy(
             messagingContractAddress,
         )) as ethers.Contract;
