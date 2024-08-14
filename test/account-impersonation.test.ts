@@ -49,6 +49,8 @@ describe("Account impersonation", function () {
             starknetProvider,
         );
         contract.connect(impersonatedAccount);
+        // We are dealing with an actual Mainnet account and its funds might have been used up.
+        await devnetProvider.mint(impersonatedAccount.address, BigInt(1e18));
     });
 
     async function expectValidationFailure(invocation: Promise<unknown>) {

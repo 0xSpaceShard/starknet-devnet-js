@@ -147,7 +147,7 @@ const block = await starknetProvider.getBlock("latest");
 
 ## L1-L2 communication
 
-Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/postman.test.ts) for more info.
+Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/l1-l2-postman.test.ts) for more info.
 
 ## Examples
 
