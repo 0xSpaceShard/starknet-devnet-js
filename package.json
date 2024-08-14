@@ -33,7 +33,7 @@
     "license": "MIT",
     "dependencies": {
         "@types/decompress": "^4.2.7",
-        "axios": "^1.7.2",
+        "axios": "^1.7.4",
         "decompress": "^4.2.1",
         "decompress-targz": "^4.1.1"
     },
