@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { Postman } from "./postman";
 import { Cheats } from "./cheats";
 import { RpcProvider } from "./rpc-provider";
-import { BalanceUnit, PredeployedAccount } from "./types";
+import { BalanceUnit, BlockId, PredeployedAccount, toRpcBlockId } from "./types";
 import { DEFAULT_DEVNET_URL, DEFAULT_HTTP_TIMEOUT } from "./constants";
 
 export type DevnetProviderConfig = {
@@ -123,13 +123,13 @@ export class DevnetProvider {
 
     /**
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/blocks
+     * @param staringBlockId the block ID of the block after which (inclusive) all blocks
+     *      should be aborted. See docs {@link BlockId} for more info.
      * @returns hash values of aborted blocks
      */
-    public async abortBlocks(startingBlockHash: string): Promise<AbortedBlocksResponse> {
+    public async abortBlocks(startingBlockId: BlockId): Promise<AbortedBlocksResponse> {
         return await this.rpcProvider.sendRequest("devnet_abortBlocks", {
-            starting_block_id: {
-                block_hash: startingBlockHash,
-            },
+            starting_block_id: toRpcBlockId(startingBlockId),
         });
     }
 
