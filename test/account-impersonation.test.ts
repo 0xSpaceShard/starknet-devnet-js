@@ -58,6 +58,7 @@ describe("Account impersonation", function () {
             await invocation;
             assert.fail("Invocation should have failed");
         } catch (err) {
+            console.log("DEBUG err", err);
             const typedErr = err as LibraryError;
             expect(typedErr.message).to.contain("Account validation failed");
         }
