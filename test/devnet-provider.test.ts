@@ -150,7 +150,7 @@ describe("DevnetProvider", function () {
             } catch (err) {
                 expect(err).to.deep.equal({
                     code: -1,
-                    message: "Block abortion failed: No block found",
+                    message: "No block found",
                 });
             }
         });
