@@ -50,3 +50,24 @@ export class GithubError extends Error {
         Object.setPrototypeOf(this, DevnetError.prototype);
     }
 }
+
+export type BlockTag = "latest" | "pending";
+
+/**
+ * If string of value "latest" or "pending", interpreted as block tag.
+ * If number, interpreted as block number.
+ * If hex string, interpreted as block hash.
+ */
+export type BlockId = BlockTag | number | string;
+
+export function toRpcBlockId(blockId: BlockId) {
+    if (blockId === "latest" || blockId === "pending") {
+        return blockId;
+    } else if (typeof blockId === "number" && blockId >= 0) {
+        return { block_number: blockId };
+    } else if (typeof blockId === "string" && /0[xX][a-fA-F0-9]+/.test(blockId)) {
+        return { block_hash: blockId };
+    }
+
+    throw new DevnetProviderError(`Invalid block ID: ${blockId}`);
+}

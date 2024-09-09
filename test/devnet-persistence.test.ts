@@ -51,9 +51,6 @@ describe("Devnet persistence", async function () {
         const balanceBeforeLoad = await dummyMint();
         expect(balanceBeforeLoad).to.equal(balanceBeforeDump + BigInt(DUMMY_AMOUNT));
 
-        // once a Devnet fix is released (hopefully after 0.1.2), this restart can be omitted.
-        await devnetProvider.restart();
-
         await devnetProvider.load(dumpPath);
         const finalBalance = await dummyMint();
 
