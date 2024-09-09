@@ -56,9 +56,9 @@ export class VersionHandler {
     private static getCompatiblePlatform(): string {
         switch (process.platform) {
             case "linux":
-                return "linux-gnu";
+                return "unknown-linux-gnu";
             case "darwin":
-                return "darwin";
+                return "apple-darwin";
             default:
                 throw new DevnetError(`Incompatible platform: ${process.platform}`);
         }
@@ -92,7 +92,7 @@ export class VersionHandler {
 
         const arch = this.getCompatibleArch();
         const platform = this.getCompatiblePlatform();
-        return `https://github.com/0xSpaceShard/starknet-devnet-rs/releases/download/${version}/starknet-devnet-${arch}-unknown-${platform}.tar.gz`;
+        return `https://github.com/0xSpaceShard/starknet-devnet-rs/releases/download/${version}/starknet-devnet-${arch}-${platform}.tar.gz`;
     }
 
     /**
