@@ -4,6 +4,8 @@ Simply follow these steps:
 
 1. `$ git checkout master`
 
+    - Using another branch is only acceptable if making a pre-release, but then the publishing script needs to be run manually (or the CI config file needs to be modified to include your branch).
+
 2. `$ npm version <NEW_VERSION>`
 
     - This creates a commit and a tag for `<NEW_VERSION>`
