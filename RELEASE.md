@@ -1,4 +1,4 @@
-The release of a new version is done automatically if the version in `package.json` on `master` is different from the one npm.
+The release of a new version is done automatically if the version in `package.json` on `master` is different from the one in npm. If the semver you use is not of the form `/v?[0-9.]+$/` (notice the optional `v`), a pre-release will be made using dist-tag `beta`. Otherwise a dist-tag `latest` is used.
 
 Simply follow these steps:
 
