@@ -19,6 +19,7 @@ else
     npm run build
 
     # NPM access token: https://docs.npmjs.com/creating-and-viewing-access-tokens
+    # If running locally, you can use `npm login` and comment out this step.
     npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
 
     npm publish --verbose --access=public --tag="$DIST_TAG"
