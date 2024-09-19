@@ -10,7 +10,7 @@ jobs:
             image: ubuntu-2204:2024.01.2
         resource_class: xlarge
         environment:
-            DEVNET_VERSION: "0.2.0-rc.3"
+            DEVNET_VERSION: "0.2.0"
             DEVNET_DIR: "/tmp/devnet-ci-storage"
             # to avoid definition complications, when updating DEVNET_DIR, always update DEVNET_PATH (should be prefix)
             DEVNET_PATH: "/tmp/devnet-ci-storage/starknet-devnet"
