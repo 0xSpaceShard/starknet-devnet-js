@@ -1,8 +1,8 @@
-import axios, { AxiosError, AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { Postman } from "./postman";
 import { Cheats } from "./cheats";
 import { RpcProvider } from "./rpc-provider";
-import { BalanceUnit, DevnetProviderError, PredeployedAccount } from "./types";
+import { BalanceUnit, BlockId, PredeployedAccount, toRpcBlockId } from "./types";
 import { DEFAULT_DEVNET_URL, DEFAULT_HTTP_TIMEOUT } from "./constants";
 
 export type DevnetProviderConfig = {
@@ -75,22 +75,6 @@ export class DevnetProvider {
         await this.rpcProvider.sendRequest("devnet_restart");
     }
 
-    private async sendStringifiedJson(url: string, json: string) {
-        return this.httpProvider
-            .post(url, json, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-            .then((resp) => resp.data)
-            .catch((err) => {
-                if (err.code === AxiosError.ECONNABORTED) {
-                    throw DevnetProviderError.fromAxiosError(err);
-                }
-                throw err.response?.data ?? err;
-            });
-    }
-
     /**
      * Generate funds at the provided address. For return spec and more info, see
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#mint-token---local-faucet
@@ -103,14 +87,12 @@ export class DevnetProvider {
         amount: bigint,
         unit: BalanceUnit = "WEI",
     ): Promise<MintResponse> {
-        const respData = await this.sendStringifiedJson(
-            this.url + "/mint",
-            `{
+        const paramsSerialized = `{
             "address": "${address}",
             "amount": ${amount},
             "unit": "${unit}"
-        }`,
-        );
+        }`;
+        const respData = await this.rpcProvider.sendRequest("devnet_mint", paramsSerialized);
 
         return {
             new_balance: BigInt(respData.new_balance),
@@ -141,11 +123,13 @@ export class DevnetProvider {
 
     /**
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/blocks
+     * @param staringBlockId the block ID of the block after which (inclusive) all blocks
+     *      should be aborted. See docs {@link BlockId} for more info.
      * @returns hash values of aborted blocks
      */
-    public async abortBlocks(startingBlockHash: string): Promise<AbortedBlocksResponse> {
+    public async abortBlocks(startingBlockId: BlockId): Promise<AbortedBlocksResponse> {
         return await this.rpcProvider.sendRequest("devnet_abortBlocks", {
-            starting_block_hash: startingBlockHash,
+            starting_block_id: toRpcBlockId(startingBlockId),
         });
     }
 
