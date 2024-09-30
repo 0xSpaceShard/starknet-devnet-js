@@ -32,13 +32,13 @@
     ],
     "license": "MIT",
     "dependencies": {
-        "@types/decompress": "^4.2.7",
         "axios": "^1.7.4",
         "decompress": "^4.2.1",
         "decompress-targz": "^4.1.1"
     },
     "devDependencies": {
         "@types/chai": "^4.2.22",
+        "@types/decompress": "^4.2.7",
         "@types/mocha": "^9.1.1",
         "@types/node": "^20.3.1",
         "@types/tmp": "^0.2.6",
