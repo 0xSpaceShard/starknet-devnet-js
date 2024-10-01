@@ -12,9 +12,17 @@ npm i starknet-devnet
 
 # Compatibility
 
+## Devnet compatibility
+
 This library version is compatible with Devnet `v0.2.0`.
 
-[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance function](./test/util.ts#L57)
+[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L57) function.
+
+## Environment compatibility
+
+This library is intended for use with Node.js, not in a browser environment. In browsers, you can only use [`DevnetProvider`](#connect-to-a-running-instance) for connecting to an already running Devnet instance, but you cannot [spawn a new Devnet](#spawn-a-new-devnet), because that relies on modules not present in the browser engine.
+
+To enable the use of `DevnetProvider` in browser, you need to configure sources for modules otherwise reported as not found. See [this issue](https://github.com/0xSpaceShard/starknet-devnet-js/issues/26) and [this SO answer](https://stackoverflow.com/a/51669301) for more info, but generally, if using webpack, it should be enough to populate a config file with the desired polyfill implementations or with `false` values.
 
 # Usage
 
