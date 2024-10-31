@@ -1,5 +1,7 @@
 The release of a new version is done automatically if the version in `package.json` on `master` is different from the one in npm. If the semver you use is not of the form `/v?[0-9.]+$/` (notice the optional `v`), a pre-release will be made using dist-tag `beta`. Otherwise a dist-tag `latest` is used.
 
+When adapting to a new starknet-devnet version, be sure to have replaced all occurrences of the previous version with the new one.
+
 Simply follow these steps:
 
 1. `$ git checkout master`
