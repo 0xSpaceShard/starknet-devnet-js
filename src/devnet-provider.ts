@@ -68,11 +68,13 @@ export class DevnetProvider {
     }
 
     /**
-     * Restart the state of the underlying Devnet instance.
+     * Restart the state of the underlying Devnet instance. You may opt to restart L1-L2 messaging.
      * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#restarting
      */
-    public async restart(): Promise<void> {
-        await this.rpcProvider.sendRequest("devnet_restart");
+    public async restart(params: { restartL1ToL2Messaging?: boolean } = {}): Promise<void> {
+        await this.rpcProvider.sendRequest("devnet_restart", {
+            restart_l1_to_l2_messaging: params.restartL1ToL2Messaging,
+        });
     }
 
     /**
