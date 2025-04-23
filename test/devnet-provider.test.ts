@@ -63,18 +63,21 @@ describe("DevnetProvider", function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT, "WEI");
             assertMintingResponse(mintResp, DUMMY_AMOUNT, "WEI");
             await assertBalance(DUMMY_ADDRESS, DUMMY_AMOUNT, ETH_TOKEN_CONTRACT_ADDRESS);
+            await assertBalance(DUMMY_ADDRESS, 0n, STRK_TOKEN_CONTRACT_ADDRESS);
         });
 
         it("works for FRI", async function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT, "FRI");
             assertMintingResponse(mintResp, DUMMY_AMOUNT, "FRI");
             await assertBalance(DUMMY_ADDRESS, DUMMY_AMOUNT, STRK_TOKEN_CONTRACT_ADDRESS);
+            await assertBalance(DUMMY_ADDRESS, 0n, ETH_TOKEN_CONTRACT_ADDRESS);
         });
 
         it("works without specifying the unit", async function () {
             const mintResp = await devnetProvider.mint(DUMMY_ADDRESS, DUMMY_AMOUNT);
-            assertMintingResponse(mintResp, DUMMY_AMOUNT, "WEI");
-            await assertBalance(DUMMY_ADDRESS, DUMMY_AMOUNT, ETH_TOKEN_CONTRACT_ADDRESS);
+            assertMintingResponse(mintResp, DUMMY_AMOUNT, "FRI");
+            await assertBalance(DUMMY_ADDRESS, DUMMY_AMOUNT, STRK_TOKEN_CONTRACT_ADDRESS);
+            await assertBalance(DUMMY_ADDRESS, 0n, ETH_TOKEN_CONTRACT_ADDRESS);
         });
 
         it("should reflect the minted amount in predeployed accounts info", async function () {

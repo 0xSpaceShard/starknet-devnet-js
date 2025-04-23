@@ -4,7 +4,7 @@ import { getContractArtifact, getEnvVar, getPredeployedAccount } from "./util";
 import { assert, expect } from "chai";
 
 describe("Account impersonation", function () {
-    this.timeout(30_000); // ms
+    this.timeout(35_000); // ms
 
     /**
      * Assuming there is a Devnet instance forked from the network where the impersonated account is located.

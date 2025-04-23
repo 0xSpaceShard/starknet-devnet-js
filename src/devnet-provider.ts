@@ -82,12 +82,12 @@ export class DevnetProvider {
      * https://0xspaceshard.github.io/starknet-devnet/docs/balance#mint-token---local-faucet
      * @param address the account address to receive funds
      * @param amount how much to mint
-     * @param unit specifier of the currency unit
+     * @param unit specifier of the currency unit; defaults to FRI
      */
     public async mint(
         address: string,
         amount: bigint,
-        unit: BalanceUnit = "WEI",
+        unit: BalanceUnit = "FRI",
     ): Promise<MintResponse> {
         const paramsSerialized = `{
             "address": "${address}",
