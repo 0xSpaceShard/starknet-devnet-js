@@ -132,7 +132,7 @@ The output location is configurable via the config object passed to the Devnet s
      * If you already have a local Devnet you would like to run, use {@link spawnCommand}.
      * @param version if set to `"latest"`, uses the latest Devnet version compatible with this library;
      *     otherwise needs to be a semver string with a prepended "v" (e.g. "v1.2.3") and
-     *     should be available in https://github.com/0xSpaceShard/starknet-devnet-rs/releases
+     *     should be available in https://github.com/0xSpaceShard/starknet-devnet/releases
      * @param config configuration object
      * @returns a newly spawned Devnet instance
      */

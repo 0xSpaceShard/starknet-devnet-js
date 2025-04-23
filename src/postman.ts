@@ -55,13 +55,13 @@ export interface L2ToL1MockTxResponse {
 }
 
 /**
- * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman
+ * https://0xspaceshard.github.io/starknet-devnet/docs/postman
  */
 export class Postman {
     public constructor(private rpcProvider: RpcProvider) {}
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#flush
+     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#flush
      */
     public async flush(additionalArgs = { dryRun: false }): Promise<FlushResponse> {
         return this.rpcProvider.sendRequest("devnet_postmanFlush", {
@@ -70,7 +70,7 @@ export class Postman {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#load
+     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#load
      */
     public async loadL1MessagingContract(
         networkUrl: string,
@@ -85,7 +85,7 @@ export class Postman {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#mock-transactions
+     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#mock-transactions
      */
     public async sendMessageToL2(
         l2ContractAddress: string,
@@ -106,7 +106,7 @@ export class Postman {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman#l2-l1
+     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#l2-l1
      */
     public async consumeMessageFromL2(
         fromAddress: string,
