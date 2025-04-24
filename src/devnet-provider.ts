@@ -35,6 +35,12 @@ export interface IncreaseTimeResponse {
     block_hash: string;
 }
 
+export interface GasModificationResponse {
+    l1_gas_price?: bigint;
+    l1_data_gas_price?: bigint;
+    l2_gas_price?: bigint;
+}
+
 export class DevnetProvider {
     public readonly url: string;
     private httpProvider: AxiosInstance;
@@ -175,5 +181,25 @@ export class DevnetProvider {
      */
     public async load(path: string): Promise<void> {
         return await this.rpcProvider.sendRequest("devnet_load", { path });
+    }
+
+    public async setGasPrices(prices: {
+        l1_gas_price?: bigint;
+        l1_data_gas_price?: bigint;
+        l2_gas_price?: bigint;
+        generate_block?: boolean;
+    }): Promise<GasModificationResponse> {
+        const newGasPrices = await this.rpcProvider.sendRequest("devnet_setGasPrice", {
+            gas_price_fri: prices.l1_gas_price,
+            data_gas_price_fri: prices.l1_data_gas_price,
+            l2_gas_price_fri: prices.l2_gas_price,
+            generate_block: prices.generate_block,
+        });
+
+        return {
+            l1_gas_price: newGasPrices.gas_price_fri,
+            l1_data_gas_price: newGasPrices.data_gas_price_fri,
+            l2_gas_price: newGasPrices.l2_gas_price_fri,
+        };
     }
 }
