@@ -64,14 +64,14 @@ jobs:
             - run:
                   name: Test keepAlive
                   command: ./scripts/test-keep-alive.sh
-    publish:
+    maybe-publish:
         docker:
             - image: cimg/node:20.10.0
         steps:
             - checkout
             - run:
-                  name: Publish
-                  command: ./scripts/npm-publish.sh
+                  name: Publish a new version if conditions met
+                  command: ./scripts/npm-maybe-publish.sh
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
@@ -79,7 +79,7 @@ workflows:
     build-test-maybe-publish:
         jobs:
             - build-and-test
-            - publish:
+            - maybe-publish:
                   context: spaceshard
                   filters:
                       branches:
