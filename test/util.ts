@@ -60,11 +60,9 @@ export async function getAccountBalance(
     config: TokenBalanceConfig = {},
 ): Promise<bigint> {
     const tokenContractAddress = config.tokenContractAddress ?? ETH_TOKEN_CONTRACT_ADDRESS;
-    const blockIdentifier = config.blockIdentifier ?? starknet.BlockTag.pending;
+    const blockIdentifier = config.blockIdentifier ?? starknet.BlockTag.PENDING;
     const tokenClass = await provider.getClassAt(tokenContractAddress, blockIdentifier);
     const tokenContract = new starknet.Contract(tokenClass.abi, tokenContractAddress, provider);
 
-    return tokenContract.balanceOf(accountAddress, {
-        blockIdentifier,
-    });
+    return tokenContract.withOptions({ blockIdentifier }).balanceOf(accountAddress);
 }

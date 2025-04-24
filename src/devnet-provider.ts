@@ -69,7 +69,7 @@ export class DevnetProvider {
 
     /**
      * Restart the state of the underlying Devnet instance. You may opt to restart L1-L2 messaging.
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#restarting
+     * https://0xspaceshard.github.io/starknet-devnet/docs/dump-load-restart#restarting
      */
     public async restart(params: { restartL1ToL2Messaging?: boolean } = {}): Promise<void> {
         await this.rpcProvider.sendRequest("devnet_restart", {
@@ -79,15 +79,15 @@ export class DevnetProvider {
 
     /**
      * Generate funds at the provided address. For return spec and more info, see
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#mint-token---local-faucet
+     * https://0xspaceshard.github.io/starknet-devnet/docs/balance#mint-token---local-faucet
      * @param address the account address to receive funds
      * @param amount how much to mint
-     * @param unit specifier of the currency unit
+     * @param unit specifier of the currency unit; defaults to FRI
      */
     public async mint(
         address: string,
         amount: bigint,
-        unit: BalanceUnit = "WEI",
+        unit: BalanceUnit = "FRI",
     ): Promise<MintResponse> {
         const paramsSerialized = `{
             "address": "${address}",
@@ -104,7 +104,7 @@ export class DevnetProvider {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/predeployed#how-to-get-predeployment-info
+     * https://0xspaceshard.github.io/starknet-devnet/docs/predeployed#how-to-get-predeployment-info
      * @returns a list of containing information on predeployed accounts. Load an account using e.g. starknet.js.
      */
     public async getPredeployedAccounts(
@@ -116,7 +116,7 @@ export class DevnetProvider {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/blocks
+     * https://0xspaceshard.github.io/starknet-devnet/docs/blocks
      * @returns the block hash of the newly created block
      */
     public async createBlock(): Promise<NewBlockResponse> {
@@ -124,7 +124,7 @@ export class DevnetProvider {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/blocks
+     * https://0xspaceshard.github.io/starknet-devnet/docs/blocks
      * @param staringBlockId the block ID of the block after which (inclusive) all blocks
      *      should be aborted. See docs {@link BlockId} for more info.
      * @returns hash values of aborted blocks
@@ -136,7 +136,7 @@ export class DevnetProvider {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/next/starknet-time#set-time
+     * https://0xspaceshard.github.io/starknet-devnet/docs/next/starknet-time#set-time
      * @returns the new time in unix seconds and, if block creation requested, the hash of the created block
      */
     public async setTime(
@@ -151,7 +151,7 @@ export class DevnetProvider {
 
     /**
      * Increase the time by the provided `increment` seconds.
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/next/starknet-time#increase-time
+     * https://0xspaceshard.github.io/starknet-devnet/docs/next/starknet-time#increase-time
      * @returns the new time in unix seconds
      */
     public async increaseTime(increment: number): Promise<IncreaseTimeResponse> {
@@ -161,7 +161,7 @@ export class DevnetProvider {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#dumping
+     * https://0xspaceshard.github.io/starknet-devnet/docs/dump-load-restart#dumping
      * @param path the path where your Devnet instance will be serialized; if not provided, defaults to the dump-path provided via CLI on Devnet startup.
      */
     public async dump(path?: string): Promise<void> {
@@ -170,7 +170,7 @@ export class DevnetProvider {
 
     /**
      * After loading, this DevnetProvider instance will be connected to the loaded Devnet instance.
-     * https://0xspaceshard.github.io/starknet-devnet-rs/docs/dump-load-restart#dumping
+     * https://0xspaceshard.github.io/starknet-devnet/docs/dump-load-restart#dumping
      * @param path the path from which a Devnet instance will be deserialized
      */
     public async load(path: string): Promise<void> {

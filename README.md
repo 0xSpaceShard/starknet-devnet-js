@@ -2,7 +2,7 @@
 
 # Introduction
 
-Using this JavaScript/TypeScript library, you can spawn [Starknet Devnet](https://github.com/0xSpaceShard/starknet-devnet-rs/) without installing and running it in a separate terminal. You can interact with it via its specific [Devnet API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api). To interact with any Starknet node or network (including Starknet Devnet) via the [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), see [starknet.js](https://www.starknetjs.com/).
+Using this JavaScript/TypeScript library, you can spawn [Starknet Devnet](https://github.com/0xSpaceShard/starknet-devnet/) without installing and running it in a separate terminal. You can interact with it via its specific [Devnet API](https://0xspaceshard.github.io/starknet-devnet/docs/api#devnet-api). To interact with any Starknet node or network (including Starknet Devnet) via the [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet/docs/api#starknet-api), see [starknet.js](https://www.starknetjs.com/).
 
 # Installation
 
@@ -14,9 +14,9 @@ npm i starknet-devnet
 
 ## Devnet compatibility
 
-This library version is compatible with Devnet `v0.2.2`.
+This library version is compatible with Devnet `v0.4.0`.
 
-[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet-rs/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L57) function.
+[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L57) function.
 
 ## Environment compatibility
 
@@ -38,9 +38,9 @@ Assuming your machine has a supported OS (macOS or Linux) and supported architec
 import { Devnet } from "starknet-devnet";
 
 async function main() {
-    // Specify anything from https://github.com/0xSpaceShard/starknet-devnet-rs/releases
+    // Specify anything from https://github.com/0xSpaceShard/starknet-devnet/releases
     // Be sure to include the 'v' if it's in the version name.
-    const devnet = await Devnet.spawnVersion("v0.2.2");
+    const devnet = await Devnet.spawnVersion("v0.4.0");
     console.log(await devnet.provider.isAlive()); // true
 }
 ```
@@ -129,7 +129,7 @@ In that case, you must take care of the spawned process after the program exits.
 
 ## Connect to a running instance
 
-If there already is a running Devnet instance (e.g. in another terminal or in another JS/TS program), you can simply connect to it by importing `DevnetProvider`. [Read more](https://0xspaceshard.github.io/starknet-devnet-rs/docs/category/running) about different ways of running Devnet.
+If there already is a running Devnet instance (e.g. in another terminal or in another JS/TS program), you can simply connect to it by importing `DevnetProvider`. [Read more](https://0xspaceshard.github.io/starknet-devnet/docs/category/running) about different ways of running Devnet.
 
 ```typescript
 import { DevnetProvider } from "starknet-devnet";
@@ -139,7 +139,7 @@ console.log(await devnet.isAlive()); // true
 
 ## Enabling Starknet API support
 
-Since this library only supports the [Devnet-specific API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet-rs/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/).
+Since this library only supports the [Devnet-specific API](https://0xspaceshard.github.io/starknet-devnet/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/).
 
 E.g. to get the latest block after spawning Devnet, you would need to do:
 
@@ -155,7 +155,7 @@ const block = await starknetProvider.getBlock("latest");
 
 ## L1-L2 communication
 
-Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet-rs/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/l1-l2-postman.test.ts) for more info.
+Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/l1-l2-postman.test.ts) for more info.
 
 ## Examples
 
