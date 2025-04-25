@@ -2,6 +2,7 @@ import { RpcProvider, Account, Contract, LibraryError, Provider } from "starknet
 import { DevnetProvider } from "..";
 import { getContractArtifact, getEnvVar, getPredeployedAccount } from "./util";
 import { assert, expect } from "chai";
+import { SIMPLE_CONTRACT_CASM_HASH, SIMPLE_CONTRACT_PATH } from "./constants";
 
 describe("Account impersonation", function () {
     this.timeout(35_000); // ms
@@ -37,10 +38,10 @@ describe("Account impersonation", function () {
         // Later, the contract is interacted with using an impersonated account.
         const predeployedAccount = await getPredeployedAccount(devnetProvider, starknetProvider);
 
-        const contractArtifact = getContractArtifact("test/data/simple.sierra");
+        const contractArtifact = getContractArtifact(SIMPLE_CONTRACT_PATH);
         const contractDeployment = await predeployedAccount.declareAndDeploy({
             contract: contractArtifact,
-            compiledClassHash: "0x63b33a5f2f46b1445d04c06d7832c48c48ad087ce0803b71f2b8d96353716ca",
+            compiledClassHash: SIMPLE_CONTRACT_CASM_HASH,
             constructorCalldata: { initial_balance: 0 },
         });
         contract = new Contract(
