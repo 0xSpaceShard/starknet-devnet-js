@@ -157,6 +157,16 @@ const block = await starknetProvider.getBlock("latest");
 
 Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/l1-l2-postman.test.ts) for more info.
 
+## Configuration modification and retrieval
+
+Devnet's configuration can be modified, other than [on startup (as already described)](#specify-devnet-arguments), via `setGasPrice`. It can be retrieved via `getConfig`.
+
+```typescript
+const devnet = await Devnet.spawnInstalled({ args: ["--l2-gas-price-fri", ...] });
+const modification = await devnet.provider.setGasPrice({ l2GasPrice: ... });
+console.log(await devnet.provider.getConfig().l2_gas_price_fri);
+```
+
 ## Examples
 
 See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for more usage examples.
