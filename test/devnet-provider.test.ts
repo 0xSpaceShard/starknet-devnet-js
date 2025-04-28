@@ -1,7 +1,12 @@
 import { expect, assert } from "chai";
-import { BalanceUnit, DevnetProvider, DevnetProviderError, MintResponse } from "..";
+import { BalanceUnit, Devnet, DevnetProvider, DevnetProviderError, MintResponse } from "..";
 import * as starknet from "starknet";
-import { ETH_TOKEN_CONTRACT_ADDRESS, STRK_TOKEN_CONTRACT_ADDRESS, getAccountBalance } from "./util";
+import {
+    ETH_TOKEN_CONTRACT_ADDRESS,
+    STRK_TOKEN_CONTRACT_ADDRESS,
+    getAccountBalance,
+    getEnvVar,
+} from "./util";
 
 describe("DevnetProvider", function () {
     const devnetProvider = new DevnetProvider();
@@ -200,5 +205,20 @@ describe("DevnetProvider", function () {
                 originalBlock.timestamp + timeIncrement,
             );
         });
+    });
+
+    it("should retrieve correct config", async function () {
+        // The existing background Devnet has one config
+        const oldConfig = await devnetProvider.getConfig();
+
+        // The newly spawned Devnet shall have its own config with the account number modified
+        const totalAccounts = 3;
+        const args = ["--accounts", totalAccounts.toString()];
+        const customizedDevnet = await Devnet.spawnCommand(getEnvVar("DEVNET_PATH"), { args });
+
+        const customizedConfig = await customizedDevnet.provider.getConfig();
+
+        expect(customizedConfig.total_accounts).to.not.equal(oldConfig.total_accounts);
+        expect(customizedConfig.total_accounts).to.equal(totalAccounts);
     });
 });
