@@ -163,7 +163,7 @@ Devnet's configuration can be modified, other than [on startup (as already descr
 
 ```typescript
 const devnet = await Devnet.spawnInstalled({ args: ["--l2-gas-price-fri", ...] });
-const modification = await devnet.setGasPrice({ l2GasPrice: ... });
+const modification = await devnet.provider.setGasPrice({ l2GasPrice: ... });
 console.log(await devnet.provider.getConfig().l2_gas_price_fri);
 ```
 
