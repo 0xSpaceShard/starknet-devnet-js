@@ -218,7 +218,7 @@ export class DevnetProvider {
     /**
      * More info at: https://0xspaceshard.github.io/starknet-devnet/docs/api#config-api
      * @returns the configuration of the underlying Devnet instance. The returned object is marked
-     * as `any` because it may change too often.
+     *      as `any` because it may change too often.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async getConfig(): Promise<any> {
