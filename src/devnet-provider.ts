@@ -198,17 +198,20 @@ export class DevnetProvider {
         },
         generateBlock?: boolean,
     ): Promise<GasModificationResponse> {
-        const newGasPrices = await this.rpcProvider.sendRequest("devnet_setGasPrice", `{
+        const newGasPrices = await this.rpcProvider.sendRequest(
+            "devnet_setGasPrice",
+            `{
             "gas_price_fri": ${price.l1GasPrice ?? null},
             "data_gas_price_fri": ${price.l1DataGasPrice ?? null},
             "l2_gas_price_fri": ${price.l2GasPrice ?? null},
             "generate_block": ${generateBlock ?? null}
-        }`);
+        }`,
+        );
 
         return {
-            l1_gas_price: newGasPrices.gas_price_fri,
-            l1_data_gas_price: newGasPrices.data_gas_price_fri,
-            l2_gas_price: newGasPrices.l2_gas_price_fri,
+            l1_gas_price: BigInt(newGasPrices.gas_price_fri),
+            l1_data_gas_price: BigInt(newGasPrices.data_gas_price_fri),
+            l2_gas_price: BigInt(newGasPrices.l2_gas_price_fri),
         };
     }
 }
