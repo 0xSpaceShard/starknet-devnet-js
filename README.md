@@ -159,7 +159,7 @@ Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundr
 
 ## Configuration modification and retrieval
 
-Devnet's configuration can be modified, other than [on startup (as already described)](#specify-devnet-arguments), via `setGasPrices`. It can be retrieved via `getConfig`.
+Devnet's configuration can be modified, other than [on startup (as already described)](#specify-devnet-arguments), via `setGasPrice`. It can be retrieved via `getConfig`.
 
 ```typescript
 const devnet = await Devnet.spawnInstalled({ args: ["--l2-gas-price-fri", ...] });
