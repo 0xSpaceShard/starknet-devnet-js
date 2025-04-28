@@ -201,11 +201,11 @@ export class DevnetProvider {
         const newGasPrices = await this.rpcProvider.sendRequest(
             "devnet_setGasPrice",
             `{
-            "gas_price_fri": ${price.l1GasPrice ?? null},
-            "data_gas_price_fri": ${price.l1DataGasPrice ?? null},
-            "l2_gas_price_fri": ${price.l2GasPrice ?? null},
-            "generate_block": ${generateBlock ?? null}
-        }`,
+                "gas_price_fri": ${price.l1GasPrice ?? null},
+                "data_gas_price_fri": ${price.l1DataGasPrice ?? null},
+                "l2_gas_price_fri": ${price.l2GasPrice ?? null},
+                "generate_block": ${generateBlock ?? null}
+            }`,
         );
 
         return {

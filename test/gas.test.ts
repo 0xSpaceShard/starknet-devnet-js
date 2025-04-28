@@ -17,6 +17,7 @@ import {
 describe("Gas price modification", function () {
     this.timeout(10_000); // ms
 
+    // Defined in beforeEach hook
     let devnet: Devnet;
     let starknetProvider: starknet.RpcProvider;
     let account: starknet.Account;
