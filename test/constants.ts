@@ -1,0 +1,5 @@
+export const SIMPLE_CONTRACT_PATH = "test/data/simple.sierra";
+export const SIMPLE_CONTRACT_SIERRA_HASH =
+    "0x02dc84cbdfc63f980cc6f8b9054184d7e33f43fdc02b2baf40017ea88490212d";
+export const SIMPLE_CONTRACT_CASM_HASH =
+    "0x63b33a5f2f46b1445d04c06d7832c48c48ad087ce0803b71f2b8d96353716ca";

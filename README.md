@@ -16,7 +16,7 @@ npm i starknet-devnet
 
 This library version is compatible with Devnet `v0.2.2`.
 
-[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L57) function.
+[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L61) function.
 
 ## Environment compatibility
 

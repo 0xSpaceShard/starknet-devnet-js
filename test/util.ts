@@ -11,6 +11,10 @@ export function expectHexEquality(h1: string, h2: string) {
     expect(BigInt(h1).toString()).to.equal(BigInt(h2).toString());
 }
 
+export function toPrefixedHex(b: bigint): string {
+    return "0x" + b.toString(16);
+}
+
 export async function getPredeployedAccount(
     devnetProvider: DevnetProvider,
     starknetProvider: starknet.Provider,

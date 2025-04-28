@@ -35,6 +35,12 @@ export interface IncreaseTimeResponse {
     block_hash: string;
 }
 
+export interface GasModificationResponse {
+    l1_gas_price?: bigint;
+    l1_data_gas_price?: bigint;
+    l2_gas_price?: bigint;
+}
+
 export class DevnetProvider {
     public readonly url: string;
     private httpProvider: AxiosInstance;
@@ -175,5 +181,37 @@ export class DevnetProvider {
      */
     public async load(path: string): Promise<void> {
         return await this.rpcProvider.sendRequest("devnet_load", { path });
+    }
+
+    /**
+     * Modify gas prices, according to https://0xspaceshard.github.io/starknet-devnet/docs/gas
+     * @param price new gas prices; any gas price can be ommitted
+     * @param generateBlock if `true`, a new block is generated immediately, having new gas prices;
+     *      otherwise (by default) the price change takes effect with the usual next block generation
+     * @returns gas prices after modification, including the unchanged ones
+     */
+    public async setGasPrice(
+        price: {
+            l1GasPrice?: bigint;
+            l1DataGasPrice?: bigint;
+            l2GasPrice?: bigint;
+        },
+        generateBlock?: boolean,
+    ): Promise<GasModificationResponse> {
+        const newGasPrices = await this.rpcProvider.sendRequest(
+            "devnet_setGasPrice",
+            `{
+                "gas_price_fri": ${price.l1GasPrice ?? null},
+                "data_gas_price_fri": ${price.l1DataGasPrice ?? null},
+                "l2_gas_price_fri": ${price.l2GasPrice ?? null},
+                "generate_block": ${generateBlock ?? null}
+            }`,
+        );
+
+        return {
+            l1_gas_price: BigInt(newGasPrices.gas_price_fri),
+            l1_data_gas_price: BigInt(newGasPrices.data_gas_price_fri),
+            l2_gas_price: BigInt(newGasPrices.l2_gas_price_fri),
+        };
     }
 }
