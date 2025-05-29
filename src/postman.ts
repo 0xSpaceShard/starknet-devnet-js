@@ -70,17 +70,27 @@ export class Postman {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#load
+     * If `address` specified, tries to load an L1 messaging contract from that address.
+     * If `address` omitted, deploys a new messaging contract by relying on the first predeployed
+     * account of the L1 network specified with `networkUrl`, assuming default mnemonic seed.
+     * If this predeployed account assumption does not hold, you should specify the private key
+     * of the account to be used in `deployerAccountPrivateKey`.
+     * More info in: https://0xspaceshard.github.io/starknet-devnet/docs/postman#load
      */
     public async loadL1MessagingContract(
         networkUrl: string,
-        address?: string,
-        networkId?: string,
+        messagingContractAddress?: string,
+        deployerAccountPrivateKey?: string,
     ): Promise<LoadL1MessagingContractResponse> {
+        if (!!messagingContractAddress && !!deployerAccountPrivateKey) {
+            throw new Error(
+                "Both parameters cannot be specified simulatenously: `address`, `deployer_account_private_key`",
+            );
+        }
         return await this.rpcProvider.sendRequest("devnet_postmanLoad", {
-            network_id: networkId,
-            address,
+            messaging_contract_address: messagingContractAddress,
             network_url: networkUrl,
+            deployer_account_private_key: deployerAccountPrivateKey,
         });
     }
 
