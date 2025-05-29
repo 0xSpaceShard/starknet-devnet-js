@@ -72,9 +72,9 @@ export class Postman {
     /**
      * If `address` specified, tries to load an L1 messaging contract from that address.
      * If `address` omitted, deploys a new messaging contract by relying on the first predeployed
-     * account * of the L1 network specified with `networkUrl`, assuming default mnemonic seed.
-     * If this * predeployed account assumption does not hold, you should specify the private key
-     * of the account to be used in `deployer_account_private_key`.
+     * account of the L1 network specified with `networkUrl`, assuming default mnemonic seed.
+     * If this predeployed account assumption does not hold, you should specify the private key
+     * of the account to be used in `deployerAccountPrivateKey`.
      * More info in: https://0xspaceshard.github.io/starknet-devnet/docs/postman#load
      */
     public async loadL1MessagingContract(
