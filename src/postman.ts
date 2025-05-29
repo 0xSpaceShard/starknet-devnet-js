@@ -79,18 +79,18 @@ export class Postman {
      */
     public async loadL1MessagingContract(
         networkUrl: string,
-        messaging_contract_address?: string,
-        deployer_account_private_key?: string,
+        messagingContractAddress?: string,
+        deployerAccountPrivateKey?: string,
     ): Promise<LoadL1MessagingContractResponse> {
-        if (!!messaging_contract_address && !!deployer_account_private_key) {
+        if (!!messagingContractAddress && !!deployerAccountPrivateKey) {
             throw new Error(
                 "Both parameters cannot be specified simulatenously: `address`, `deployer_account_private_key`",
             );
         }
         return await this.rpcProvider.sendRequest("devnet_postmanLoad", {
-            messaging_contract_address,
+            messaging_contract_address: messagingContractAddress,
             network_url: networkUrl,
-            deployer_account_private_key,
+            deployer_account_private_key: deployerAccountPrivateKey,
         });
     }
 
