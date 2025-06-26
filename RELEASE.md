@@ -8,10 +8,10 @@ Simply follow these steps:
 
     - Using another branch is only acceptable if making a pre-release, but then the publishing script needs to be run manually (or the CI config file needs to be modified to include your branch).
 
-2. `$ npm version <NEW_VERSION>`
+2. Update the package version and create a git tag
 
-    - This creates a commit and a tag for `<NEW_VERSION>`
-    - See what `<NEW_VERSION>` can be [on this page](https://docs.npmjs.com/cli/v8/commands/npm-version).
+    - If the package version has already been incremented, just create a tag with `$ git tag <VERSION>`.
+    - Otherwise run `$ npm version <NEW_VERSION>`. See what `<NEW_VERSION>` can be [here](https://docs.npmjs.com/cli/v8/commands/npm-version).
 
 3. `$ git push`
 
