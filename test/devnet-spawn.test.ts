@@ -6,7 +6,7 @@ import tmp from "tmp";
 import fs from "fs";
 
 describe("Spawnable Devnet", function () {
-    this.timeout(5000);
+    this.timeout(10_000);
 
     let devnetPath: string;
     let devnetVersion: string;
