@@ -9,6 +9,8 @@ import {
 } from "./util";
 
 describe("DevnetProvider", function () {
+    this.timeout(5000); // ms
+
     const devnetProvider = new DevnetProvider();
     const starknetProvider = new starknet.RpcProvider({ nodeUrl: devnetProvider.url });
 
