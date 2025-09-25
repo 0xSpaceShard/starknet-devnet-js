@@ -70,6 +70,8 @@ async function getFreePort(): Promise<string> {
 export class Devnet {
     static instances: Devnet[] = [];
 
+    private static CLEANUP_REGISTERED = false;
+
     private constructor(
         private process: ChildProcess,
         public provider: DevnetProvider,
@@ -106,6 +108,9 @@ export class Devnet {
         if (!config.keepAlive) {
             // store it now to ensure it's cleaned up automatically if the remaining steps fail
             Devnet.instances.push(devnetInstance);
+            if (!Devnet.CLEANUP_REGISTERED) {
+                Devnet.registerCleanup();
+            }
         }
 
         return new Promise((resolve, reject) => {
@@ -170,15 +175,27 @@ Alternatively, increase the startup time defined in the config object provided o
         return this.process.kill(signal);
     }
 
-    static cleanup() {
+    private static cleanup() {
         for (const instance of Devnet.instances) {
             if (!instance.process.killed) {
                 instance.kill();
             }
         }
     }
-}
 
-for (const event of ["exit", "SIGINT", "SIGTERM", "SIGQUIT", "uncaughtException"]) {
-    process.on(event, Devnet.cleanup);
+    private static registerCleanup() {
+        for (const event of ["exit"]) {
+            process.on(event, Devnet.cleanup);
+            // This handler just propagates the exit code.
+        }
+
+        for (const event of ["SIGINT", "SIGTERM", "SIGQUIT", "uncaughtException"]) {
+            process.on(event, () => {
+                Devnet.cleanup();
+                process.exit(1); // Omitting this results in ignoring e.g. ctrl+c
+            });
+        }
+
+        Devnet.CLEANUP_REGISTERED = true;
+    }
 }
