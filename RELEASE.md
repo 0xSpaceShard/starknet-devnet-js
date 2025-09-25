@@ -1,8 +1,14 @@
-The release of a new version is done automatically if the version in `package.json` on `master` is different from the one in npm. If the semver you use is not of the form `/v?[0-9.]+$/` (notice the optional `v`), a pre-release will be made using dist-tag `beta`. Otherwise a dist-tag `latest` is used.
+## Adaptation to starknet-devnet
 
-When adapting to a new starknet-devnet version, be sure to have replaced all occurrences of the previous version with the new one.
+When adapting to a new [starknet-devnet](https://github.com/0xSpaceShard/starknet-devnet) version, be sure to have replaced all occurrences of the previous version with the new one.
 
-Simply follow these steps:
+If possible, keep the semver of `starknet-devnet-js` the same as that of `starknet-devnet`.
+
+## New release
+
+The release of a new version is done automatically if the version in `package.json` on `master` is different from the one on [npm](https://www.npmjs.com/package/starknet-devnet). If the semver you use is not of the form `/v?[0-9.]+$/` (notice the optional `v`), a pre-release will be made using dist-tag `beta`. Otherwise a dist-tag `latest` is used.
+
+Follow these steps to create a new release on npm and GitHub:
 
 1. `$ git checkout master`
 
