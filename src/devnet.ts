@@ -184,10 +184,8 @@ Alternatively, increase the startup time defined in the config object provided o
     }
 
     private static registerCleanup() {
-        for (const event of ["exit"]) {
-            process.on(event, Devnet.cleanup);
-            // This handler just propagates the exit code.
-        }
+        // This handler just propagates the exit code.
+        process.on("exit", Devnet.cleanup);
 
         for (const event of ["SIGINT", "SIGTERM", "SIGQUIT", "uncaughtException"]) {
             process.on(event, () => {
