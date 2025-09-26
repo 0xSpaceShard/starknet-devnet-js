@@ -51,17 +51,17 @@ export class GithubError extends Error {
     }
 }
 
-export type BlockTag = "latest" | "pending";
+export type BlockTag = "latest" | "pre_confirmed";
 
 /**
- * If string of value "latest" or "pending", interpreted as block tag.
+ * If string of value "latest" or "pre_confirmed", interpreted as block tag.
  * If number, interpreted as block number.
  * If hex string, interpreted as block hash.
  */
 export type BlockId = BlockTag | number | string;
 
 export function toRpcBlockId(blockId: BlockId) {
-    if (blockId === "latest" || blockId === "pending") {
+    if (blockId === "latest" || blockId === "pre_confirmed") {
         return blockId;
     } else if (typeof blockId === "number" && blockId >= 0) {
         return { block_number: blockId };

@@ -3,7 +3,17 @@ import { toRpcBlockId } from "..";
 
 describe("toRpcBlockId", function () {
     it("should fail for invalid input", function () {
-        for (const invalidValue of ["0x", -4, "abc", "123", "Pending", "LLatest"]) {
+        for (const invalidValue of [
+            "0x",
+            -4,
+            "abc",
+            "123",
+            "Pending",
+            "pending",
+            "preconfirmed",
+            "Pre_confirmed",
+            "LLatest",
+        ]) {
             try {
                 toRpcBlockId(invalidValue);
                 expect.fail("Should have failed earlier");
@@ -36,7 +46,7 @@ describe("toRpcBlockId", function () {
     });
 
     it("should work for valid block tag", function () {
-        for (const validValue of ["latest", "pending"]) {
+        for (const validValue of ["latest", "pre_confirmed"]) {
             expect(toRpcBlockId(validValue)).to.deep.equal(validValue);
         }
     });

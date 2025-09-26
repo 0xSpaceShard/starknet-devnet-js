@@ -55,7 +55,7 @@ interface TokenBalanceConfig {
 /**
  * @param accountAddress the address of the account whose balance you would like to know
  * @param provider the provider to the network where the account is deployed
- * @param config object holding the address of the ERC20 token contract to query (defaults to ETH) and block ID (defaults to pending)
+ * @param config object holding the address of the ERC20 token contract to query (defaults to ETH) and block ID (defaults to pre_confirmed)
  * @returns the balance of `accountAddress` in the specified token contract at the specified block
  */
 export async function getAccountBalance(
@@ -64,7 +64,7 @@ export async function getAccountBalance(
     config: TokenBalanceConfig = {},
 ): Promise<bigint> {
     const tokenContractAddress = config.tokenContractAddress ?? ETH_TOKEN_CONTRACT_ADDRESS;
-    const blockIdentifier = config.blockIdentifier ?? starknet.BlockTag.PENDING;
+    const blockIdentifier = config.blockIdentifier ?? "pre_confirmed";
     const tokenClass = await provider.getClassAt(tokenContractAddress, blockIdentifier);
     const tokenContract = new starknet.Contract(tokenClass.abi, tokenContractAddress, provider);
 
