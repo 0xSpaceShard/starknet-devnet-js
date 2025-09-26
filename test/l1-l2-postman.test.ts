@@ -50,7 +50,7 @@ describe("Postman", function () {
             compiledClassHash: "0x02548c46a426421b5156ebbdd9a1ee0a32ec4588af5c9a68d636725cfa11d300",
         });
         l2Contract = new starknet.Contract({
-            abi: l2Sierra.bi,
+            abi: l2Sierra.abi,
             address: l2ContractDeployment.deploy.contract_address,
             providerOrAccount: l2Provider,
         });
