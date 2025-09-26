@@ -13,6 +13,9 @@ describe("toRpcBlockId", function () {
             "preconfirmed",
             "Pre_confirmed",
             "LLatest",
+            "l1accepted",
+            "l2_accepted",
+            "accepted",
         ]) {
             try {
                 toRpcBlockId(invalidValue);
@@ -46,7 +49,7 @@ describe("toRpcBlockId", function () {
     });
 
     it("should work for valid block tag", function () {
-        for (const validValue of ["latest", "pre_confirmed"]) {
+        for (const validValue of ["latest", "pre_confirmed", "l1_accepted"]) {
             expect(toRpcBlockId(validValue)).to.deep.equal(validValue);
         }
     });
