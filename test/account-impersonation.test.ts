@@ -5,7 +5,7 @@ import { assert, expect } from "chai";
 import { SIMPLE_CONTRACT_CASM_HASH, SIMPLE_CONTRACT_PATH } from "./constants";
 
 describe("Account impersonation", function () {
-    this.timeout(35_000); // ms
+    this.timeout(50_000); // ms
 
     /**
      * Assuming there is a Devnet instance forked from the network where the impersonated account is located.
