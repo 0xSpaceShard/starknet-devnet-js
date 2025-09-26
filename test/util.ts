@@ -11,21 +11,17 @@ export function expectHexEquality(h1: string, h2: string) {
     expect(BigInt(h1).toString()).to.equal(BigInt(h2).toString());
 }
 
-export function toPrefixedHex(b: bigint): string {
-    return "0x" + b.toString(16);
-}
-
 export async function getPredeployedAccount(
     devnetProvider: DevnetProvider,
     starknetProvider: starknet.Provider,
 ) {
     const predeployedAccountData = (await devnetProvider.getPredeployedAccounts())[0];
 
-    return new starknet.Account(
-        starknetProvider,
-        predeployedAccountData.address,
-        predeployedAccountData.private_key,
-    );
+    return new starknet.Account({
+        provider: starknetProvider,
+        address: predeployedAccountData.address,
+        signer: predeployedAccountData.private_key,
+    });
 }
 
 /**
@@ -64,9 +60,13 @@ export async function getAccountBalance(
     config: TokenBalanceConfig = {},
 ): Promise<bigint> {
     const tokenContractAddress = config.tokenContractAddress ?? ETH_TOKEN_CONTRACT_ADDRESS;
-    const blockIdentifier = config.blockIdentifier ?? "pre_confirmed";
+    const blockIdentifier = config.blockIdentifier ?? starknet.BlockTag.PRE_CONFIRMED;
     const tokenClass = await provider.getClassAt(tokenContractAddress, blockIdentifier);
-    const tokenContract = new starknet.Contract(tokenClass.abi, tokenContractAddress, provider);
+    const tokenContract = new starknet.Contract({
+        abi: tokenClass.abi,
+        address: tokenContractAddress,
+        providerOrAccount: provider,
+    });
 
     return tokenContract.withOptions({ blockIdentifier }).balanceOf(accountAddress);
 }

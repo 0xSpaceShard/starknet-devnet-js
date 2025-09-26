@@ -24,11 +24,11 @@ describe("Account impersonation", function () {
         devnetProvider = new DevnetProvider({ url: forkedDevnetUrl });
         starknetProvider = new RpcProvider({ nodeUrl: devnetProvider.url });
 
-        impersonatedAccount = new Account(
-            starknetProvider,
-            "0x0276feffed3bf366a4305f5e32e0ccb08c2da4915d83d81127b5b9d4210a80db",
-            "0x1", // dummy private key, in impersonation it is not actually used for signing
-        );
+        impersonatedAccount = new Account({
+            provider: starknetProvider,
+            address: "0x0276feffed3bf366a4305f5e32e0ccb08c2da4915d83d81127b5b9d4210a80db",
+            signer: "0x1", // dummy private key, in impersonation it is not actually used for signing
+        });
     });
 
     before("restart the state", async function () {
@@ -44,11 +44,11 @@ describe("Account impersonation", function () {
             compiledClassHash: SIMPLE_CONTRACT_CASM_HASH,
             constructorCalldata: { initial_balance: 0 },
         });
-        contract = new Contract(
-            contractArtifact.abi,
-            contractDeployment.deploy.contract_address,
-            starknetProvider,
-        );
+        contract = new Contract({
+            abi: contractArtifact.abi,
+            address: contractDeployment.deploy.contract_address,
+            providerOrAccount: starknetProvider,
+        });
         contract.connect(impersonatedAccount);
         // We are dealing with an actual Mainnet account and its funds might have been used up.
         await devnetProvider.mint(impersonatedAccount.address, BigInt(1e18));

@@ -1,13 +1,7 @@
 import { expect, assert } from "chai";
 import * as starknet from "starknet";
 import { Devnet } from "..";
-import {
-    expectHexEquality,
-    getContractArtifact,
-    getEnvVar,
-    getPredeployedAccount,
-    toPrefixedHex,
-} from "./util";
+import { expectHexEquality, getContractArtifact, getEnvVar, getPredeployedAccount } from "./util";
 import {
     SIMPLE_CONTRACT_SIERRA_HASH,
     SIMPLE_CONTRACT_PATH,
@@ -32,19 +26,19 @@ describe("Gas price modification", function () {
     // Data used in declaration tx
     const contractArtifact = getContractArtifact(SIMPLE_CONTRACT_PATH);
     const compiledClassHash = SIMPLE_CONTRACT_CASM_HASH;
-    const txConfig = {
+    const txConfig: starknet.UniversalDetails = {
         resourceBounds: {
             l1_gas: {
-                max_amount: "0x0",
-                max_price_per_unit: toPrefixedHex(initialL1GasPrice),
+                max_amount: 0n,
+                max_price_per_unit: initialL1GasPrice,
             },
             l1_data_gas: {
-                max_amount: toPrefixedHex(1000n),
-                max_price_per_unit: toPrefixedHex(loweredL1DataGasPrice),
+                max_amount: 1000n,
+                max_price_per_unit: loweredL1DataGasPrice,
             },
             l2_gas: {
-                max_amount: toPrefixedHex(BigInt(1e19)),
-                max_price_per_unit: toPrefixedHex(loweredL2GasPrice),
+                max_amount: 10_000_000_000_000_000_000n,
+                max_price_per_unit: loweredL2GasPrice,
             },
         },
     };
