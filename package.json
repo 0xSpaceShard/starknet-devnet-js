@@ -1,6 +1,6 @@
 {
     "name": "starknet-devnet",
-    "version": "0.4.4",
+    "version": "0.6.0",
     "description": "Starknet Devnet provider",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -9,7 +9,7 @@
     ],
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
-        "build-check": "tsc -p tsconfig.build.json --noEmit",
+        "build-check": "tsc -p tsconfig.build.json --noEmit && tsc -p tsconfig.test.json",
         "test": "mocha -r ts-node/register test/**/*.ts",
         "pretest": "npm run build",
         "format": "prettier --log-level log --write \"**/*.{ts,js,md,yml,json}\"",
@@ -48,7 +48,7 @@
         "ethers": "^6.13.1",
         "mocha": "^10.2.0",
         "prettier-eslint": "^16.3.0",
-        "starknet": "~7.1.0",
+        "starknet": "~8.5.4",
         "tmp": "^0.2.3",
         "ts-node": "^10.9.1",
         "typescript": "^5.0.4"

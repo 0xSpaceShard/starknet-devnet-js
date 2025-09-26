@@ -10,7 +10,7 @@ jobs:
             image: ubuntu-2204:2024.01.2
         resource_class: xlarge
         environment:
-            DEVNET_VERSION: "0.4.3"
+            DEVNET_VERSION: "0.6.0"
             DEVNET_DIR: "/tmp/devnet-ci-storage"
             # to avoid definition complications, when updating DEVNET_DIR, always update DEVNET_PATH (should be prefix)
             DEVNET_PATH: "/tmp/devnet-ci-storage/starknet-devnet"
@@ -46,7 +46,7 @@ jobs:
                   name: Spawn Devnet forked from Mainnet
                   command: |
                       docker run -d --network host --name forked-devnet \
-                        shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --port ${FORKED_DEVNET_PORT} --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_8
+                        shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --port ${FORKED_DEVNET_PORT} --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_9
             - run:
                   name: Download precompiled Devnet
                   command: |
