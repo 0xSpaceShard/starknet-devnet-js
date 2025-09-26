@@ -4,6 +4,13 @@ When adapting to a new [starknet-devnet](https://github.com/0xSpaceShard/starkne
 
 If possible, keep the semver of `starknet-devnet-js` the same as that of `starknet-devnet`.
 
+### RPC compatibility
+
+Make sure:
+
+-   the underlying Devnet is compatible with the starknet.js version configured in package.json
+-   `--fork-network` in config.yml is using an up-to-date URL with the correct RPC version.
+
 ## New release
 
 The release of a new version is done automatically if the version in `package.json` on `master` is different from the one on [npm](https://www.npmjs.com/package/starknet-devnet). If the semver you use is not of the form `/v?[0-9.]+$/` (notice the optional `v`), a pre-release will be made using dist-tag `beta`. Otherwise a dist-tag `latest` is used.

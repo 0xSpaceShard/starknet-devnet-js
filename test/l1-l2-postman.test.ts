@@ -52,9 +52,8 @@ describe("Postman", function () {
         l2Contract = new starknet.Contract({
             abi: l2Sierra.abi,
             address: l2ContractDeployment.deploy.contract_address,
-            providerOrAccount: l2Provider,
+            providerOrAccount: l2Account,
         });
-        l2Contract.connect(l2Account);
 
         // Deploy the L1 contract. It needs to know the messaging contract's address.
         const l1Signers = await l1Provider.listAccounts();

@@ -46,7 +46,7 @@ jobs:
                   name: Spawn Devnet forked from Mainnet
                   command: |
                       docker run -d --network host --name forked-devnet \
-                        shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --port ${FORKED_DEVNET_PORT} --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_8
+                        shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --port ${FORKED_DEVNET_PORT} --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_9
             - run:
                   name: Download precompiled Devnet
                   command: |
