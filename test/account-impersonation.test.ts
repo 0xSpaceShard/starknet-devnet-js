@@ -47,7 +47,7 @@ describe("Account impersonation", function () {
         contract = new Contract({
             abi: contractArtifact.abi,
             address: contractDeployment.deploy.contract_address,
-            providerOrAccount: predeployedAccount,
+            providerOrAccount: impersonatedAccount,
         });
         // We are dealing with an actual Mainnet account and its funds might have been used up.
         await devnetProvider.mint(impersonatedAccount.address, BigInt(1e18));
