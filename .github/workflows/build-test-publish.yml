@@ -119,15 +119,15 @@ jobs:
             - name: Publish to NPM
               if: steps.version-check.outputs.skip_publish != 'true'
               run: npm publish --access=public --tag=${{ steps.package-info.outputs.dist_tag }}
-              
+
             - name: Create GitHub Release
               if: steps.version-check.outputs.skip_publish != 'true'
               uses: softprops/action-gh-release@v1
               with:
-                tag_name: v${{ steps.package-info.outputs.version }}
-                name: Release v${{ steps.package-info.outputs.version }}
-                draft: false
-                prerelease: ${{ steps.package-info.outputs.dist_tag == 'beta' }}
-                generate_release_notes: true
+                  tag_name: v${{ steps.package-info.outputs.version }}
+                  name: Release v${{ steps.package-info.outputs.version }}
+                  draft: false
+                  prerelease: ${{ steps.package-info.outputs.dist_tag == 'beta' }}
+                  generate_release_notes: true
               env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
