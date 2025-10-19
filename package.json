@@ -19,7 +19,10 @@
         "check-all-tests-executed": "! grep '\\(describe\\|it\\)\\.only(' $(git ls-files '*.ts')"
     },
     "author": "SpaceShard",
-    "repository": "github:0xSpaceShard/starknet-devnet-js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/0xSpaceShard/starknet-devnet-js.git"
+    },
     "keywords": [
         "starknet",
         "devnet",

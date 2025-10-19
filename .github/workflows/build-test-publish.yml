@@ -9,9 +9,12 @@ on:
 env:
     DEVNET_VERSION: "0.6.0"
     DEVNET_DIR: "/tmp/devnet-ci-storage"
-    # to avoid definition complications, when updating DEVNET_DIR, always update DEVNET_PATH (should be prefix)
     DEVNET_PATH: "/tmp/devnet-ci-storage/starknet-devnet"
     FORKED_DEVNET_PORT: 5051
+
+permissions:
+    id-token: write
+    contents: read
 
 jobs:
     build-and-test:
@@ -23,58 +26,62 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 20
+                  cache: "npm"
 
-            - name: Versions
+            - name: Print versions
               run: |
                   echo "node: $(node --version)"
                   echo "npm: $(npm --version)"
 
-            - name: Install
+            - name: Install dependencies
               run: npm ci
 
             - name: Build
               run: npm run build
 
-            - name: Format
+            - name: Check code formatting
               run: npm run format-check
 
-            - name: Lint
+            - name: Run linter
               run: npm run lint-check
 
-            - name: Check all tests executed
+            - name: Verify all tests are executed
               run: npm run check-all-tests-executed
 
-            - name: Spawn Devnet
+            - name: Start regular Devnet container
               run: |
                   docker run -d --network host --name devnet \
-                    shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --state-archive-capacity full --dump-on request
+                    shardlabs/starknet-devnet-rs:${DEVNET_VERSION} \
+                    --state-archive-capacity full \
+                    --dump-on request
 
-            - name: Spawn Devnet forked from Mainnet
+            - name: Start Mainnet-forked Devnet container
               run: |
                   docker run -d --network host --name forked-devnet \
-                    shardlabs/starknet-devnet-rs:${DEVNET_VERSION} --port ${FORKED_DEVNET_PORT} --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_9
+                    shardlabs/starknet-devnet-rs:${DEVNET_VERSION} \
+                    --port ${FORKED_DEVNET_PORT} \
+                    --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_9
 
-            - name: Download precompiled Devnet
+            - name: Download Devnet binary
               run: |
-                  URL=https://github.com/0xSpaceShard/starknet-devnet/releases/download/v${DEVNET_VERSION}/starknet-devnet-x86_64-unknown-linux-gnu.tar.gz
                   mkdir -p ${DEVNET_DIR}
-                  curl -sSfL ${URL} | tar -xvz -C ${DEVNET_DIR}
+                  curl -sSfL https://github.com/0xSpaceShard/starknet-devnet/releases/download/v${DEVNET_VERSION}/starknet-devnet-x86_64-unknown-linux-gnu.tar.gz | tar -xvz -C ${DEVNET_DIR}
 
-            - name: Spawn Anvil
+            - name: Start Anvil container
               run: |
                   docker run -d --network host --name anvil \
                     ghcr.io/foundry-rs/foundry:nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a anvil
 
-            - name: Test
+            - name: Run tests
               run: npm run test
 
-            - name: Test keepAlive
+            - name: Run keepAlive test
               run: ./scripts/test-keep-alive.sh
 
     publish:
         needs: build-and-test
-        if: github.ref == 'refs/heads/master'
         runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/master'
         steps:
             - uses: actions/checkout@v4
 
@@ -82,9 +89,31 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 20
+                  cache: "npm"
                   registry-url: "https://registry.npmjs.org"
 
-            - name: Publish a new version if conditions met
-              run: ./scripts/npm-maybe-publish.sh
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+            - name: Extract package information
+              id: package-info
+              run: |
+                  echo "name=$(jq -r '.name' package.json)" >> $GITHUB_OUTPUT
+                  echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+                  DIST_TAG=$(echo "$(jq -r '.version' package.json)" | awk '/^v?[0-9.]+$/{ print "latest"; next; } { print "beta" }')
+                  echo "dist_tag=$DIST_TAG" >> $GITHUB_OUTPUT
+
+            - name: Check published version
+              id: version-check
+              run: |
+                  NPM_VERSION=$(npm view "${{ steps.package-info.outputs.name }}" dist-tags."${{ steps.package-info.outputs.dist_tag }}" || echo "")
+                  echo "Current version: ${{ steps.package-info.outputs.version }}"
+                  echo "Published version: $NPM_VERSION"
+                  if [ "${{ steps.package-info.outputs.version }}" = "$NPM_VERSION" ]; then
+                    echo "skip_publish=true" >> $GITHUB_OUTPUT
+                    echo "Version already published. Skipping."
+                  else
+                    echo "skip_publish=false" >> $GITHUB_OUTPUT
+                    echo "New version detected. Will publish."
+                  fi
+
+            - name: Publish to NPM
+              if: steps.version-check.outputs.skip_publish != 'true'
+              run: npm publish --access=public --tag=${{ steps.package-info.outputs.dist_tag }}
