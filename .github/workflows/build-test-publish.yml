@@ -12,6 +12,10 @@ env:
     DEVNET_PATH: "/tmp/devnet-ci-storage/starknet-devnet"
     FORKED_DEVNET_PORT: 5051
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
     build-and-test:
         runs-on: ubuntu-22.04
