@@ -27,9 +27,6 @@ jobs:
               with:
                   node-version: 20
 
-            - name: Update npm
-              run: npm install -g npm@latest
-
             - name: Print versions
               run: |
                   echo "node: $(node --version)"
@@ -93,6 +90,9 @@ jobs:
                   node-version: 20
                   cache: "npm"
                   registry-url: "https://registry.npmjs.org"
+
+            - name: Update npm
+              run: npm install -g npm@latest
 
             - name: Extract package information
               id: package-info
