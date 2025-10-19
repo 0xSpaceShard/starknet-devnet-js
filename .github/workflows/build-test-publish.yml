@@ -13,8 +13,8 @@ env:
     FORKED_DEVNET_PORT: 5051
 
 permissions:
-  id-token: write
-  contents: read
+    id-token: write
+    contents: read
 
 jobs:
     build-and-test:
