@@ -81,6 +81,7 @@ jobs:
     publish:
         needs: build-and-test
         runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/master'
         steps:
             - uses: actions/checkout@v4
 
@@ -115,4 +116,4 @@ jobs:
 
             - name: Publish to NPM
               if: steps.version-check.outputs.skip_publish != 'true'
-              run: npm publish --dry-run --access=public --tag=${{ steps.package-info.outputs.dist_tag }}
+              run: npm publish --access=public --tag=${{ steps.package-info.outputs.dist_tag }}
