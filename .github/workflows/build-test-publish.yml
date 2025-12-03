@@ -7,7 +7,7 @@ on:
         branches: ["*"]
 
 env:
-    DEVNET_VERSION: "0.6.1"
+    DEVNET_VERSION: "0.7.0"
     DEVNET_DIR: "/tmp/devnet-ci-storage"
     DEVNET_PATH: "/tmp/devnet-ci-storage/starknet-devnet"
     FORKED_DEVNET_PORT: 5051
@@ -59,7 +59,7 @@ jobs:
                   docker run -d --network host --name forked-devnet \
                     shardlabs/starknet-devnet-rs:${DEVNET_VERSION} \
                     --port ${FORKED_DEVNET_PORT} \
-                    --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_9
+                    --fork-network http://rpc.pathfinder.equilibrium.co/mainnet/rpc/v0_10
 
             - name: Download Devnet binary
               run: |

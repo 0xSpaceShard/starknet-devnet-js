@@ -47,7 +47,7 @@ describe("Postman", function () {
         const l2Sierra = getContractArtifact("test/data/l1_l2.sierra");
         const l2ContractDeployment = await l2Account.declareAndDeploy({
             contract: l2Sierra,
-            compiledClassHash: "0x02548c46a426421b5156ebbdd9a1ee0a32ec4588af5c9a68d636725cfa11d300",
+            compiledClassHash: "0x0276c17b4a6ef5b27f6a0d25bf8b59c6c7718e13e476292b2dc0854182e58057",
         });
         l2Contract = new starknet.Contract({
             abi: l2Sierra.abi,

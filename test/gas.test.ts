@@ -67,9 +67,9 @@ describe("Gas price modification", function () {
         } catch (err) {
             const rpcError = err as starknet.RpcError;
             expect(rpcError.baseError).to.deep.equal({
-                code: 53,
+                code: -1,
                 message:
-                    "The transaction's resources don't cover validation or the minimal transaction fee",
+                    "Resource bounds were not satisfied: Max L1DataGas price (9) is lower than the actual gas price: 10.\nMax L2Gas price (9) is lower than the actual gas price: 10.",
             });
         }
     }
