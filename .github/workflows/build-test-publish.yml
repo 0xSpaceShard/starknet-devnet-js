@@ -127,7 +127,6 @@ jobs:
               run: npm publish --access=public --tag=${{ steps.package-info.outputs.dist_tag }}
 
             - name: Create GitHub Release
-              if: steps.version-check.outputs.skip_publish != 'true'
               uses: softprops/action-gh-release@v1
               with:
                   tag_name: v${{ steps.package-info.outputs.version }}
