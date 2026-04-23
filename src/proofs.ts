@@ -1,3 +1,4 @@
+import { L2ToL1Message } from "./postman";
 import { RpcProvider } from "./rpc-provider";
 import { BlockId, toRpcBlockId } from "./types";
 
@@ -43,13 +44,10 @@ export interface InvokeV3Transaction {
 }
 
 /**
- * L2 to L1 message included in the proof response
+ * L2 to L1 message included in the proof response, ordered by emission.
  */
-export interface ProofL2ToL1Message {
+export interface ProofL2ToL1Message extends L2ToL1Message {
     order: number;
-    from_address: string;
-    to_address: string;
-    payload: string[];
 }
 
 /**

@@ -1,12 +1,11 @@
 import { expect } from "chai";
 import * as starknet from "starknet";
-import { Devnet } from "..";
-import { InvokeV3Transaction } from "../src/proofs";
+import { Devnet, InvokeV3Transaction } from "..";
 import { getContractArtifact, getEnvVar, getPredeployedAccount } from "./util";
 import { SIMPLE_CONTRACT_PATH, SIMPLE_CONTRACT_CASM_HASH } from "./constants";
 
 describe("Transaction proofs", function () {
-    this.timeout(30_000); // ms
+    this.timeout(60_000); // ms
 
     let devnet: Devnet;
     let starknetProvider: starknet.RpcProvider;
@@ -34,8 +33,7 @@ describe("Transaction proofs", function () {
             providerOrAccount: account,
         });
 
-        // Execute 10 transactions with tips to satisfy proof mode requirements
-        // (needs 10 V3 transactions with tips)
+        // Devnet's proof mode requires at least 10 blocks to exist before proving.
         for (let i = 0; i < 10; i++) {
             await devnet.provider.createBlock();
         }
@@ -103,8 +101,6 @@ describe("Transaction proofs", function () {
     });
 
     it("should fail to prove a transaction that would revert", async function () {
-        // The simple contract doesn't have a method that reverts easily,
-        // but we can try to call with a non-existent selector
         const badCall: starknet.Call = {
             contractAddress: contract.address,
             entrypoint: "nonexistent_function",
@@ -112,14 +108,16 @@ describe("Transaction proofs", function () {
         };
 
         const nonce = await account.getNonce();
+        const invokeTx = await buildInvokeV3Transaction(account, [badCall], nonce);
 
         try {
-            const invokeTx = await buildInvokeV3Transaction(account, [badCall], nonce);
             await devnet.provider.proofs.proveTransaction("latest", invokeTx);
             expect.fail("Should have thrown an error for reverting transaction");
         } catch (err) {
-            // Expected to fail - transaction simulation fails
-            expect(err).to.exist;
+            // rpc-provider throws the raw JSON-RPC error object: { code, message, ... }
+            const rpcErr = err as { code?: unknown; message?: unknown };
+            expect(rpcErr.code, `unexpected error shape: ${JSON.stringify(err)}`).to.be.a("number");
+            expect(rpcErr.message).to.be.a("string").and.not.empty;
         }
     });
 

@@ -14,7 +14,7 @@ npm i starknet-devnet
 
 ## Devnet compatibility
 
-This library version is compatible with Devnet `v0.7.2`.
+This library version is compatible with Devnet `v0.8.1`.
 
 [Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L61) function.
 
@@ -161,7 +161,7 @@ Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundr
 
 Use the `proofs` property of `DevnetProvider` to prove INVOKE v3 transactions. This is useful for testing proof-aware flows in your application. See the [Devnet proofs documentation](https://0xspaceshard.github.io/starknet-devnet/docs/proofs) for more details on proof modes.
 
-**Note:** Before calling `proveTransaction`, Devnet requires at least 10 V3 transactions with tips to be executed. Start Devnet with `--proof-mode devnet` to enable this feature.
+**Note:** Before calling `proveTransaction`, Devnet requires at least 10 blocks to exist. Start Devnet with `--proof-mode devnet` to enable this feature.
 
 ```typescript
 import { Devnet } from "starknet-devnet";
@@ -169,7 +169,7 @@ import * as starknet from "starknet";
 
 const devnet = await Devnet.spawnInstalled({ args: ["--proof-mode", "devnet"] });
 
-// ... deploy contract and execute 10+ transactions with tips first ...
+// ... ensure at least 10 blocks exist (e.g. via devnet.provider.createBlock()) ...
 
 // Build an INVOKE v3 transaction payload
 const invokeTx = {
