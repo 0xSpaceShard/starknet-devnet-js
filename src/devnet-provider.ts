@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { Postman } from "./postman";
 import { Cheats } from "./cheats";
+import { Proofs } from "./proofs";
 import { RpcProvider } from "./rpc-provider";
 import { BalanceUnit, BlockId, PredeployedAccount, toRpcBlockId } from "./types";
 import { DEFAULT_DEVNET_URL, DEFAULT_HTTP_TIMEOUT } from "./constants";
@@ -52,6 +53,9 @@ export class DevnetProvider {
     /** Contains methods for cheating, e.g. account impersonation. */
     public readonly cheats: Cheats;
 
+    /** Contains methods for transaction proofs. */
+    public readonly proofs: Proofs;
+
     public constructor(config?: DevnetProviderConfig) {
         this.url = config?.url || DEFAULT_DEVNET_URL;
         this.httpProvider = axios.create({
@@ -61,6 +65,7 @@ export class DevnetProvider {
         this.rpcProvider = new RpcProvider(this.httpProvider, this.url);
         this.postman = new Postman(this.rpcProvider);
         this.cheats = new Cheats(this.rpcProvider);
+        this.proofs = new Proofs(this.rpcProvider);
     }
 
     /**
