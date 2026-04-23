@@ -14,7 +14,7 @@ npm i starknet-devnet
 
 ## Devnet compatibility
 
-This library version is compatible with Devnet `v0.7.2`.
+This library version is compatible with Devnet `v0.8.1`.
 
 [Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L61) function.
 
@@ -156,6 +156,50 @@ const block = await starknetProvider.getBlock("latest");
 ## L1-L2 communication
 
 Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/l1-l2-postman.test.ts) for more info.
+
+## Transaction Proofs
+
+Use the `proofs` property of `DevnetProvider` to prove INVOKE v3 transactions. This is useful for testing proof-aware flows in your application. See the [Devnet proofs documentation](https://0xspaceshard.github.io/starknet-devnet/docs/proofs) for more details on proof modes.
+
+**Note:** Before calling `proveTransaction`, Devnet requires at least 10 blocks to exist. Start Devnet with `--proof-mode devnet` to enable this feature.
+
+```typescript
+import { Devnet } from "starknet-devnet";
+import * as starknet from "starknet";
+
+const devnet = await Devnet.spawnInstalled({ args: ["--proof-mode", "devnet"] });
+
+// ... ensure at least 10 blocks exist (e.g. via devnet.provider.createBlock()) ...
+
+// Build an INVOKE v3 transaction payload
+const invokeTx = {
+    type: "INVOKE" as const,
+    version: "0x3" as const,
+    sender_address: account.address,
+    calldata: ["0x1", "0x2"],
+    signature: ["0x...", "0x..."],
+    nonce: "0x0",
+    resource_bounds: {
+        l1_gas: { max_amount: "0x100", max_price_per_unit: "0x100" },
+        l1_data_gas: { max_amount: "0x100", max_price_per_unit: "0x100" },
+        l2_gas: { max_amount: "0x100", max_price_per_unit: "0x100" },
+    },
+    tip: "0x0",
+    paymaster_data: [],
+    account_deployment_data: [],
+    nonce_data_availability_mode: "L1" as const,
+    fee_data_availability_mode: "L1" as const,
+};
+
+// Prove the transaction
+const proofResult = await devnet.provider.proofs.proveTransaction("latest", invokeTx);
+
+console.log(proofResult.proof); // Base64-encoded mock proof
+console.log(proofResult.proof_facts); // Array of 9 hex strings
+console.log(proofResult.l2_to_l1_messages); // L2 to L1 messages from simulation
+```
+
+See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/proofs.test.ts) for a complete test with transaction building and signing.
 
 ## Configuration modification and retrieval
 
