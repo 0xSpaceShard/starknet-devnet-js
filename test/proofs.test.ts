@@ -107,8 +107,16 @@ describe("Transaction proofs", function () {
             calldata: [],
         };
 
+        // Estimation would itself fail for a reverting call, so hand-pick bounds
+        // to ensure the failure surfaces from proveTransaction and not estimateFee.
+        const fixedBounds: starknet.ResourceBoundsBN = {
+            l1_gas: { max_amount: 0x1000n, max_price_per_unit: 0x1000n },
+            l1_data_gas: { max_amount: 0x1000n, max_price_per_unit: 0x1000n },
+            l2_gas: { max_amount: 0x100000000n, max_price_per_unit: 0x1000n },
+        };
+
         const nonce = await account.getNonce();
-        const invokeTx = await buildInvokeV3Transaction(account, [badCall], nonce);
+        const invokeTx = await buildInvokeV3Transaction(account, [badCall], nonce, fixedBounds);
 
         try {
             await devnet.provider.proofs.proveTransaction("latest", invokeTx);
@@ -156,26 +164,27 @@ async function buildInvokeV3Transaction(
     account: starknet.Account,
     calls: starknet.Call[],
     nonce: string | bigint,
+    overrideBounds?: starknet.ResourceBoundsBN,
 ): Promise<InvokeV3Transaction> {
     // Compile the calldata
     const calldata = starknet.transaction.getExecuteCalldata(calls, account.cairoVersion);
 
-    // Get suggested max fee / resource bounds
-    const estimateFee = await account.estimateInvokeFee(calls);
+    // Use provided bounds, or estimate them. Estimation will fail for reverting
+    // calls, so pass `overrideBounds` when the test deliberately submits one.
+    const bounds = overrideBounds ?? (await account.estimateInvokeFee(calls)).resourceBounds;
 
-    // Build resource bounds from estimate (with some buffer)
     const resourceBounds = {
         l1_gas: {
-            max_amount: toHex(estimateFee.resourceBounds.l1_gas.max_amount),
-            max_price_per_unit: toHex(estimateFee.resourceBounds.l1_gas.max_price_per_unit),
+            max_amount: toHex(bounds.l1_gas.max_amount),
+            max_price_per_unit: toHex(bounds.l1_gas.max_price_per_unit),
         },
         l1_data_gas: {
-            max_amount: toHex(estimateFee.resourceBounds.l1_data_gas.max_amount),
-            max_price_per_unit: toHex(estimateFee.resourceBounds.l1_data_gas.max_price_per_unit),
+            max_amount: toHex(bounds.l1_data_gas.max_amount),
+            max_price_per_unit: toHex(bounds.l1_data_gas.max_price_per_unit),
         },
         l2_gas: {
-            max_amount: toHex(estimateFee.resourceBounds.l2_gas.max_amount),
-            max_price_per_unit: toHex(estimateFee.resourceBounds.l2_gas.max_price_per_unit),
+            max_amount: toHex(bounds.l2_gas.max_amount),
+            max_price_per_unit: toHex(bounds.l2_gas.max_price_per_unit),
         },
     };
 
@@ -203,7 +212,7 @@ async function buildInvokeV3Transaction(
         cairoVersion: account.cairoVersion,
         nonce: BigInt(nonce.toString()),
         version: "0x3",
-        resourceBounds: estimateFee.resourceBounds,
+        resourceBounds: bounds,
         tip: 0n,
         paymasterData: [],
         accountDeploymentData: [],
