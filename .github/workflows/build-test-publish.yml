@@ -20,12 +20,12 @@ jobs:
     build-and-test:
         runs-on: ubuntu-22.04
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
-                  node-version: 20
+                  node-version: 24
 
             - name: Print versions
               run: |
@@ -82,12 +82,12 @@ jobs:
         runs-on: ubuntu-latest
         if: github.ref == 'refs/heads/master'
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
-                  node-version: 20
+                  node-version: 24
                   cache: "npm"
                   registry-url: "https://registry.npmjs.org"
 
@@ -128,7 +128,7 @@ jobs:
 
             - name: Create GitHub Release
               if: steps.version-check.outputs.skip_publish != 'true'
-              uses: softprops/action-gh-release@v1
+              uses: softprops/action-gh-release@v3
               with:
                   tag_name: v${{ steps.package-info.outputs.version }}
                   name: Release v${{ steps.package-info.outputs.version }}
