@@ -64,9 +64,7 @@ describe("Postman", function () {
             l1L2ExampleArtifact.bytecode,
             l1Signer,
         );
-        l1L2Example = (await l1L2ExampleFactory.deploy(
-            messagingContractAddress,
-        )) as Contract;
+        l1L2Example = (await l1L2ExampleFactory.deploy(messagingContractAddress)) as Contract;
         await l1L2Example.waitForDeployment();
     });
 
