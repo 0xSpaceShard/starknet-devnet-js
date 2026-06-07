@@ -1,6 +1,6 @@
 import * as starknet from "starknet";
 import { DevnetProvider } from "..";
-import * as ethers from "ethers";
+import { Contract, ContractFactory, JsonRpcProvider } from "ethers";
 import { expect } from "chai";
 import { expectHexEquality, getContractArtifact, getPredeployedAccount } from "./util";
 
@@ -19,7 +19,7 @@ describe("Postman", function () {
      * Using the default host and port.
      */
     const L1_URL = "http://127.0.0.1:8545";
-    const l1Provider = new ethers.JsonRpcProvider(L1_URL);
+    const l1Provider = new JsonRpcProvider(L1_URL);
 
     const user = 1n;
 
@@ -27,7 +27,7 @@ describe("Postman", function () {
     let l2Contract: starknet.Contract;
     /** Address of deployed mock Starknet messaging contract on L1. */
     let messagingContractAddress: string;
-    let l1L2Example: ethers.Contract;
+    let l1L2Example: Contract;
 
     before(async function () {
         await devnetProvider.restart();
@@ -56,18 +56,17 @@ describe("Postman", function () {
         });
 
         // Deploy the L1 contract. It needs to know the messaging contract's address.
-        const l1Signers = await l1Provider.listAccounts();
-        const l1Signer = l1Signers[0];
+        const l1Signer = await l1Provider.getSigner();
 
         const l1L2ExampleArtifact = getContractArtifact("test/data/L1L2Example.json");
-        const l1L2ExampleFactory = new ethers.ContractFactory(
+        const l1L2ExampleFactory = new ContractFactory(
             l1L2ExampleArtifact.abi,
             l1L2ExampleArtifact.bytecode,
             l1Signer,
         );
         l1L2Example = (await l1L2ExampleFactory.deploy(
             messagingContractAddress,
-        )) as ethers.Contract;
+        )) as Contract;
         await l1L2Example.waitForDeployment();
     });
 
@@ -76,17 +75,17 @@ describe("Postman", function () {
      * you is enough, as done in the before() hook.
      */
     it("should deploy a custom messaging contract", async () => {
-        const l1Signer = (await l1Provider.listAccounts())[0];
+        const l1Signer = await l1Provider.getSigner();
         const messagingArtifact = getContractArtifact("test/data/MockStarknetMessaging.json");
 
-        const messagingFactory = new ethers.ContractFactory(
+        const messagingFactory = new ContractFactory(
             messagingArtifact.abi,
             messagingArtifact.bytecode,
             l1Signer,
         );
 
         const ctorArg = 5 * 60; // messasge cancellation delay in seconds
-        const messagingContract = (await messagingFactory.deploy(ctorArg)) as ethers.Contract;
+        const messagingContract = (await messagingFactory.deploy(ctorArg)) as Contract;
         await messagingContract.waitForDeployment();
         const deploymentAddress = await messagingContract.getAddress();
 
