@@ -101,7 +101,10 @@ export class VersionHandler {
      * @returns the path where the archive was stored
      */
     private static async fetchArchivedExecutable(url: string, versionDir: string): Promise<string> {
-        const resp = await this.httpProvider.get(url, { responseType: "stream" });
+        const resp = await this.httpProvider.get(url, {
+            responseType: "stream",
+            timeout: 120_000,
+        });
         if (resp.status === axios.HttpStatusCode.NotFound) {
             throw new GithubError(`Not found: ${url}`);
         } else if (resp.status !== axios.HttpStatusCode.Ok) {
