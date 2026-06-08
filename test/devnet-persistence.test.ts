@@ -6,7 +6,8 @@ import { expect } from "chai";
 describe("Devnet persistence", async function () {
     this.timeout(10_000); // ms
 
-    const WORKDIR = ".";
+    const WORKDIR = "/tmp";
+    const DUMP_PREFIX = "persisted_devnet_";
     const DUMP_EXTENSION = ".dump.json";
 
     const DUMMY_ADDRESS = "0x1";
@@ -16,7 +17,7 @@ describe("Devnet persistence", async function () {
 
     function removeDumps() {
         for (const fileName of fs.readdirSync(WORKDIR)) {
-            if (fileName.endsWith(DUMP_EXTENSION)) {
+            if (fileName.startsWith(DUMP_PREFIX) && fileName.endsWith(DUMP_EXTENSION)) {
                 const file = path.join(WORKDIR, fileName);
                 fs.unlinkSync(file);
             }
@@ -33,7 +34,7 @@ describe("Devnet persistence", async function () {
     });
 
     function getRandomDumpPath() {
-        const name = `persisted_devnet_${Math.random().toString().slice(2)}${DUMP_EXTENSION}`;
+        const name = `${DUMP_PREFIX}${Math.random().toString().slice(2)}${DUMP_EXTENSION}`;
         return path.join(WORKDIR, name);
     }
 

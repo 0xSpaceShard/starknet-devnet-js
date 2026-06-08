@@ -61,20 +61,12 @@ export async function getAccountBalance(
 ): Promise<bigint> {
     const tokenContractAddress = config.tokenContractAddress ?? ETH_TOKEN_CONTRACT_ADDRESS;
     const blockIdentifier = config.blockIdentifier ?? starknet.BlockTag.PRE_CONFIRMED;
+    const tokenClass = await provider.getClassAt(tokenContractAddress, blockIdentifier);
+    const tokenContract = new starknet.Contract({
+        abi: tokenClass.abi,
+        address: tokenContractAddress,
+        providerOrAccount: provider,
+    });
 
-    // Call balanceOf via low-level callContract instead of Contract + abi, because
-    // Devnet's predeployed token classes expose their abi as the literal string "null",
-    // which breaks starknet.Contract's abi parser.
-    const result = await provider.callContract(
-        {
-            contractAddress: tokenContractAddress,
-            entrypoint: "balance_of",
-            calldata: [accountAddress],
-        },
-        blockIdentifier,
-    );
-    const felts = Array.isArray(result) ? result : (result as { result: string[] }).result;
-    const low = BigInt(felts[0]);
-    const high = BigInt(felts[1]);
-    return low + (high << 128n);
+    return tokenContract.withOptions({ blockIdentifier }).balanceOf(accountAddress);
 }

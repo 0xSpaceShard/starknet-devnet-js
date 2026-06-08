@@ -55,13 +55,13 @@ export interface L2ToL1MockTxResponse {
 }
 
 /**
- * https://0xspaceshard.github.io/starknet-devnet/docs/postman
+ * https://starknet-io.github.io/starknet-devnet/docs/postman
  */
 export class Postman {
     public constructor(private rpcProvider: RpcProvider) {}
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#flush
+     * https://starknet-io.github.io/starknet-devnet/docs/postman#flush
      */
     public async flush(additionalArgs = { dryRun: false }): Promise<FlushResponse> {
         return this.rpcProvider.sendRequest("devnet_postmanFlush", {
@@ -75,7 +75,7 @@ export class Postman {
      * account of the L1 network specified with `networkUrl`, assuming default mnemonic seed.
      * If this predeployed account assumption does not hold, you should specify the private key
      * of the account to be used in `deployerAccountPrivateKey`.
-     * More info in: https://0xspaceshard.github.io/starknet-devnet/docs/postman#load
+     * More info in: https://starknet-io.github.io/starknet-devnet/docs/postman#load
      */
     public async loadL1MessagingContract(
         networkUrl: string,
@@ -95,7 +95,7 @@ export class Postman {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#mock-transactions
+     * https://starknet-io.github.io/starknet-devnet/docs/postman#mock-transactions
      */
     public async sendMessageToL2(
         l2ContractAddress: string,
@@ -116,7 +116,7 @@ export class Postman {
     }
 
     /**
-     * https://0xspaceshard.github.io/starknet-devnet/docs/postman#l2-l1
+     * https://starknet-io.github.io/starknet-devnet/docs/postman#l2-l1
      */
     public async consumeMessageFromL2(
         fromAddress: string,

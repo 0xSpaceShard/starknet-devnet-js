@@ -150,11 +150,13 @@ describe("Spawnable Devnet", function () {
     });
 
     it("should spawn by version", async function () {
+        this.timeout(30_000);
         const devnet = await Devnet.spawnVersion(`v${devnetVersion}`);
         expect(await devnet.provider.isAlive()).to.be.true;
     });
 
     it("should spawn if specifying 'latest'", async function () {
+        this.timeout(30_000);
         const devnet = await Devnet.spawnVersion("latest");
         expect(await devnet.provider.isAlive()).to.be.true;
     });

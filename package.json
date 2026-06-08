@@ -1,6 +1,6 @@
 {
     "name": "starknet-devnet",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "description": "Starknet Devnet provider",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
     "author": "SpaceShard",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/0xSpaceShard/starknet-devnet-js.git"
+        "url": "git+https://github.com/starknet-io/starknet-devnet-js.git"
     },
     "keywords": [
         "starknet",

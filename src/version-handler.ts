@@ -26,7 +26,7 @@ export class VersionHandler {
     /**
      * Ensure that the command corresponding to the provided `version` exists.
      * @param version semver string with a prepended "v";
-     *      should be available in https://github.com/0xSpaceShard/starknet-devnet/releases
+     *      should be available in https://github.com/starknet-io/starknet-devnet/releases
      * @returns the path to the executable corresponding to the version
      */
     static async getExecutable(version: string): Promise<string> {
@@ -65,7 +65,7 @@ export class VersionHandler {
     }
 
     private static async getArchivedExecutableUrl(version: string): Promise<string> {
-        const releasesUrl = "https://api.github.com/repos/0xSpaceShard/starknet-devnet/releases";
+        const releasesUrl = "https://api.github.com/repos/starknet-io/starknet-devnet/releases";
         const releasesResp = await this.httpProvider.get(releasesUrl);
 
         if (releasesResp.status !== axios.HttpStatusCode.Ok) {
@@ -92,7 +92,7 @@ export class VersionHandler {
 
         const arch = this.getCompatibleArch();
         const platform = this.getCompatiblePlatform();
-        return `https://github.com/0xSpaceShard/starknet-devnet/releases/download/${version}/starknet-devnet-${arch}-${platform}.tar.gz`;
+        return `https://github.com/starknet-io/starknet-devnet/releases/download/${version}/starknet-devnet-${arch}-${platform}.tar.gz`;
     }
 
     /**
@@ -101,7 +101,10 @@ export class VersionHandler {
      * @returns the path where the archive was stored
      */
     private static async fetchArchivedExecutable(url: string, versionDir: string): Promise<string> {
-        const resp = await this.httpProvider.get(url, { responseType: "stream" });
+        const resp = await this.httpProvider.get(url, {
+            responseType: "stream",
+            timeout: 120_000,
+        });
         if (resp.status === axios.HttpStatusCode.NotFound) {
             throw new GithubError(`Not found: ${url}`);
         } else if (resp.status !== axios.HttpStatusCode.Ok) {
