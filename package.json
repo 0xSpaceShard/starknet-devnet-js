@@ -21,7 +21,7 @@
     "author": "SpaceShard",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/0xSpaceShard/starknet-devnet-js.git"
+        "url": "git+https://github.com/starknet-io/starknet-devnet-js.git"
     },
     "keywords": [
         "starknet",

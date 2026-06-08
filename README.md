@@ -2,7 +2,7 @@
 
 # Introduction
 
-Using this JavaScript/TypeScript library, you can spawn [Starknet Devnet](https://github.com/0xSpaceShard/starknet-devnet/) without installing and running it in a separate terminal. You can interact with it via its specific [Devnet API](https://0xspaceshard.github.io/starknet-devnet/docs/api#devnet-api). To interact with any Starknet node or network (including Starknet Devnet) via the [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet/docs/api#starknet-api), see [starknet.js](https://www.starknetjs.com/).
+Using this JavaScript/TypeScript library, you can spawn [Starknet Devnet](https://github.com/starknet-io/starknet-devnet/) without installing and running it in a separate terminal. You can interact with it via its specific [Devnet API](https://starknet-io.github.io/starknet-devnet/docs/api#devnet-api). To interact with any Starknet node or network (including Starknet Devnet) via the [Starknet JSON-RPC API](https://starknet-io.github.io/starknet-devnet/docs/api#starknet-api), see [starknet.js](https://www.starknetjs.com/).
 
 # Installation
 
@@ -16,13 +16,13 @@ npm i starknet-devnet
 
 This library version is compatible with Devnet `v0.8.2`.
 
-[Devnet's balance checking functionality](https://0xspaceshard.github.io/starknet-devnet/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L61) function.
+[Devnet's balance checking functionality](https://starknet-io.github.io/starknet-devnet/docs/balance#check-balance) is not provided in this library because it is simply replaceable using starknet.js, as witnessed by the [getAccountBalance](./test/util.ts#L61) function.
 
 ## Environment compatibility
 
 This library is intended for use with Node.js, not in a browser environment. In browsers, you can only use [`DevnetProvider`](#connect-to-a-running-instance) for connecting to an already running Devnet instance, but you cannot [spawn a new Devnet](#spawn-a-new-devnet), because that relies on modules not present in the browser engine.
 
-To enable the use of `DevnetProvider` in browser, you need to configure sources for modules otherwise reported as not found. See [this issue](https://github.com/0xSpaceShard/starknet-devnet-js/issues/26) and [this SO answer](https://stackoverflow.com/a/51669301) for more info, but generally, if using webpack, it should be enough to populate a config file with the desired polyfill implementations or with `false` values.
+To enable the use of `DevnetProvider` in browser, you need to configure sources for modules otherwise reported as not found. See [this issue](https://github.com/starknet-io/starknet-devnet-js/issues/26) and [this SO answer](https://stackoverflow.com/a/51669301) for more info, but generally, if using webpack, it should be enough to populate a config file with the desired polyfill implementations or with `false` values.
 
 # Usage
 
@@ -38,7 +38,7 @@ Assuming your machine has a supported OS (macOS or Linux) and supported architec
 import { Devnet } from "starknet-devnet";
 
 async function main() {
-    // Specify anything from https://github.com/0xSpaceShard/starknet-devnet/releases
+    // Specify anything from https://github.com/starknet-io/starknet-devnet/releases
     // Be sure to include the 'v' if it's in the version name.
     const devnet = await Devnet.spawnVersion("v0.6.1");
     console.log(await devnet.provider.isAlive()); // true
@@ -129,7 +129,7 @@ In that case, you must take care of the spawned process after the program exits.
 
 ## Connect to a running instance
 
-If there already is a running Devnet instance (e.g. in another terminal or in another JS/TS program), you can simply connect to it by importing `DevnetProvider`. [Read more](https://0xspaceshard.github.io/starknet-devnet/docs/category/running) about different ways of running Devnet.
+If there already is a running Devnet instance (e.g. in another terminal or in another JS/TS program), you can simply connect to it by importing `DevnetProvider`. [Read more](https://starknet-io.github.io/starknet-devnet/docs/category/running) about different ways of running Devnet.
 
 ```typescript
 import { DevnetProvider } from "starknet-devnet";
@@ -139,7 +139,7 @@ console.log(await devnet.isAlive()); // true
 
 ## Enabling Starknet API support
 
-Since this library only supports the [Devnet-specific API](https://0xspaceshard.github.io/starknet-devnet/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://0xspaceshard.github.io/starknet-devnet/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/).
+Since this library only supports the [Devnet-specific API](https://starknet-io.github.io/starknet-devnet/docs/api#devnet-api), to interact via [Starknet JSON-RPC API](https://starknet-io.github.io/starknet-devnet/docs/api#starknet-api), use [starknet.js](https://www.starknetjs.com/).
 
 E.g. to get the latest block after spawning Devnet, you would need to do:
 
@@ -155,11 +155,11 @@ const block = await starknetProvider.getBlock("latest");
 
 ## L1-L2 communication
 
-Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://0xspaceshard.github.io/starknet-devnet/docs/postman). See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/l1-l2-postman.test.ts) for more info.
+Assuming there is an L1 provider running (e.g. [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)), use the `postman` property of `DevnetProvider` to achieve [L1-L2 communication](https://starknet-io.github.io/starknet-devnet/docs/postman). See [this example](https://github.com/starknet-io/starknet-devnet-js/blob/master/test/l1-l2-postman.test.ts) for more info.
 
 ## Transaction Proofs
 
-Use the `proofs` property of `DevnetProvider` to prove INVOKE v3 transactions. This is useful for testing proof-aware flows in your application. See the [Devnet proofs documentation](https://0xspaceshard.github.io/starknet-devnet/docs/proofs) for more details on proof modes.
+Use the `proofs` property of `DevnetProvider` to prove INVOKE v3 transactions. This is useful for testing proof-aware flows in your application. See the [Devnet proofs documentation](https://starknet-io.github.io/starknet-devnet/docs/proofs) for more details on proof modes.
 
 **Note:** Before calling `proveTransaction`, Devnet requires at least 10 blocks to exist. Start Devnet with `--proof-mode devnet` to enable this feature.
 
@@ -199,7 +199,7 @@ console.log(proofResult.proof_facts); // Array of 9 hex strings
 console.log(proofResult.l2_to_l1_messages); // L2 to L1 messages from simulation
 ```
 
-See [this example](https://github.com/0xSpaceShard/starknet-devnet-js/blob/master/test/proofs.test.ts) for a complete test with transaction building and signing.
+See [this example](https://github.com/starknet-io/starknet-devnet-js/blob/master/test/proofs.test.ts) for a complete test with transaction building and signing.
 
 ## Configuration modification and retrieval
 
@@ -213,11 +213,11 @@ console.log(await devnet.provider.getConfig().l2_gas_price_fri);
 
 ## Examples
 
-See the [`test` directory](https://github.com/0xSpaceShard/starknet-devnet-js/tree/master/test) for more usage examples.
+See the [`test` directory](https://github.com/starknet-io/starknet-devnet-js/tree/master/test) for more usage examples.
 
 ## Contribute
 
-If you spot a problem or room for improvement, check if an issue for it [already exists](https://github.com/0xSpaceShard/starknet-devnet-js/issues). If not, [create a new one](https://github.com/0xSpaceShard/starknet-devnet-js/issues/new). You are welcome to open a PR yourself to close the issue. Once you open a PR, you will see a template with a list of steps - please follow them.
+If you spot a problem or room for improvement, check if an issue for it [already exists](https://github.com/starknet-io/starknet-devnet-js/issues). If not, [create a new one](https://github.com/starknet-io/starknet-devnet-js/issues/new). You are welcome to open a PR yourself to close the issue. Once you open a PR, you will see a template with a list of steps - please follow them.
 
 ### Test
 

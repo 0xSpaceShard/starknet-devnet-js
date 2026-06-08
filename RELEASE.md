@@ -1,6 +1,6 @@
 ## Adaptation to starknet-devnet
 
-When adapting to a new [starknet-devnet](https://github.com/0xSpaceShard/starknet-devnet) version, be sure to have replaced all occurrences of the previous version with the new one.
+When adapting to a new [starknet-devnet](https://github.com/starknet-io/starknet-devnet) version, be sure to have replaced all occurrences of the previous version with the new one.
 
 If possible, keep the semver of `starknet-devnet-js` the same as that of `starknet-devnet`.
 

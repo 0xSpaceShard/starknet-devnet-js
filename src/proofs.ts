@@ -26,7 +26,7 @@ export type DataAvailabilityMode = "L1" | "L2";
 /**
  * INVOKE v3 transaction payload.
  * Compatible with starknet.js RPC.INVOKE_TXN_V3 type.
- * https://0xspaceshard.github.io/starknet-devnet/docs/proofs
+ * https://starknet-io.github.io/starknet-devnet/docs/proofs
  */
 export interface InvokeV3Transaction {
     type: "INVOKE";
@@ -52,7 +52,7 @@ export interface ProofL2ToL1Message extends L2ToL1Message {
 
 /**
  * Response from `starknet_proveTransaction`
- * https://0xspaceshard.github.io/starknet-devnet/docs/proofs
+ * https://starknet-io.github.io/starknet-devnet/docs/proofs
  */
 export interface ProveTransactionResponse {
     /** Base64-encoded mock proof */
@@ -68,7 +68,7 @@ export interface ProveTransactionResponse {
  *
  * This covers `starknet_proveTransaction`, a Devnet extension for proving/validating
  * `INVOKE v3` transaction payloads. For configuration (proof modes), see:
- * https://0xspaceshard.github.io/starknet-devnet/docs/proofs
+ * https://starknet-io.github.io/starknet-devnet/docs/proofs
  */
 export class Proofs {
     constructor(private rpcProvider: RpcProvider) {}
@@ -82,7 +82,7 @@ export class Proofs {
      * If the transaction simulation fails (e.g. execution reverts), an error is returned
      * instead of a proof.
      *
-     * https://0xspaceshard.github.io/starknet-devnet/docs/proofs
+     * https://starknet-io.github.io/starknet-devnet/docs/proofs
      *
      * @param blockId the block context for proving (e.g. "latest", block number, or block hash)
      * @param transaction the INVOKE v3 transaction payload to prove
