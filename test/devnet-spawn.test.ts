@@ -118,6 +118,24 @@ describe("Spawnable Devnet", function () {
         expect(stderrContent).to.be.empty;
     });
 
+    it("should use the port assigned by Devnet", async function () {
+        const stdoutFile = tmp.fileSync();
+
+        const devnet = await Devnet.spawnCommand(devnetPath, {
+            stdout: stdoutFile.fd,
+        });
+
+        const devnetUrl = new URL(devnet.provider.url);
+        expect(devnetUrl.hostname).to.equal("127.0.0.1");
+        expect(devnetUrl.port).to.not.equal("0");
+
+        const stdoutContent = fs.readFileSync(stdoutFile.name).toString();
+        expect(stdoutContent).to.contain(
+            `Starknet Devnet listening on 127.0.0.1:${devnetUrl.port}`,
+        );
+        expect(await devnet.provider.isAlive()).to.be.true;
+    });
+
     it("should use the specified ports", async function () {
         const dummyPort = 2345; // assuming it's free
 
