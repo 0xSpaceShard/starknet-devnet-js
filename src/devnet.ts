@@ -1,12 +1,9 @@
 import { ChildProcess, spawn as spawnChildProcess } from "child_process";
+import fs from "fs";
 import { DevnetProvider } from "./devnet-provider";
 import { DevnetError } from "./types";
-import { isFreePort, sleep } from "./util";
-import {
-    DEFAULT_DEVNET_HOST,
-    DEFAULT_DEVNET_PORT,
-    LATEST_COMPATIBLE_DEVNET_VERSION,
-} from "./constants";
+import { sleep } from "./util";
+import { DEFAULT_DEVNET_HOST, LATEST_COMPATIBLE_DEVNET_VERSION } from "./constants";
 import { VersionHandler } from "./version-handler";
 import { Stream } from "stream";
 
@@ -26,14 +23,20 @@ export interface DevnetConfig {
     keepAlive?: boolean;
 }
 
+type DevnetEndpoint =
+    | { url: string; shouldReadUrlFromStdout: false }
+    | { shouldReadUrlFromStdout: true };
+
+const DEVNET_LISTENING_REGEX = /Starknet Devnet listening on (?:https?:\/\/)?([^\s:]+):(\d+)/;
+
 /**
- * Attempt to extract the URL from the provided Devnet CLI args. If host or present not present,
+ * Attempt to extract the URL from the provided Devnet CLI args. If host or port is not present,
  * populates the received array with default values. The host defaults to 127.0.0.1 and the port
- * is randomly assigned.
+ * is assigned by Devnet via `--port 0`.
  * @param args CLI args to Devnet
- * @returns the URL enabling communication with the Devnet instance
+ * @returns URL data enabling communication with the Devnet instance
  */
-async function ensureUrl(args: string[]): Promise<string> {
+function ensureEndpoint(args: string[]): DevnetEndpoint {
     let host: string;
     const hostParamIndex = args.indexOf("--host");
     if (hostParamIndex === -1) {
@@ -46,25 +49,97 @@ async function ensureUrl(args: string[]): Promise<string> {
     let port: string;
     const portParamIndex = args.indexOf("--port");
     if (portParamIndex === -1) {
-        port = await getFreePort();
+        port = "0";
         args.push("--port", port);
     } else {
         port = args[portParamIndex + 1];
     }
 
+    if (port === "0") {
+        return { shouldReadUrlFromStdout: true };
+    }
+
+    return { url: `http://${host}:${port}`, shouldReadUrlFromStdout: false };
+}
+
+function parseDevnetUrl(output: string): string | undefined {
+    const match = DEVNET_LISTENING_REGEX.exec(output);
+    if (!match) {
+        return undefined;
+    }
+
+    const [, host, port] = match;
     return `http://${host}:${port}`;
 }
 
-async function getFreePort(): Promise<string> {
-    const step = 1000;
-    const maxPort = 65535;
-    for (let port = DEFAULT_DEVNET_PORT + step; port <= maxPort; port += step) {
-        if (await isFreePort(port)) {
-            return port.toString();
-        }
+function forwardOutput(configuredOutput: DevnetOutput | undefined, chunk: Buffer): void {
+    const output = configuredOutput || "inherit";
+    if (output === "ignore") {
+        return;
     }
 
-    throw new DevnetError("Could not find a free port! Try rerunning your command.");
+    if (output === "inherit") {
+        process.stdout.write(chunk);
+        return;
+    }
+
+    if (typeof output === "number") {
+        fs.writeSync(output, chunk);
+        return;
+    }
+
+    (output as unknown as NodeJS.WritableStream).write(chunk);
+}
+
+function readDevnetUrlFromStdout(
+    devnetProcess: ChildProcess,
+    configuredOutput: DevnetOutput | undefined,
+    maxStartupMillis: number,
+): Promise<string> {
+    const stdout = devnetProcess.stdout;
+    if (!stdout) {
+        return Promise.reject(
+            new DevnetError("Could not read Devnet output to determine its port."),
+        );
+    }
+
+    return new Promise((resolve, reject) => {
+        let output = "";
+        let resolved = false;
+
+        const timeout = setTimeout(() => {
+            if (!resolved) {
+                resolved = true;
+                reject(new DevnetError("Could not determine Devnet URL from startup output."));
+            }
+        }, maxStartupMillis);
+
+        stdout.on("data", (chunk: Buffer) => {
+            forwardOutput(configuredOutput, chunk);
+
+            if (resolved) {
+                return;
+            }
+
+            output += chunk.toString();
+            const devnetUrl = parseDevnetUrl(output);
+            if (devnetUrl) {
+                resolved = true;
+                clearTimeout(timeout);
+                resolve(devnetUrl);
+            }
+        });
+
+        devnetProcess.on("exit", () => {
+            if (!resolved && devnetProcess.exitCode) {
+                resolved = true;
+                clearTimeout(timeout);
+                reject(`Devnet exited with code ${devnetProcess.exitCode}. \
+Check Devnet's logged output for more info. \
+The output location is configurable via the config object passed to the Devnet spawning method.`);
+            }
+        });
+    });
 }
 
 export class Devnet {
@@ -95,35 +170,68 @@ export class Devnet {
      */
     static async spawnCommand(command: string, config: DevnetConfig = {}): Promise<Devnet> {
         const args = config.args || [];
-        const devnetUrl = await ensureUrl(args);
+        const endpoint = ensureEndpoint(args);
+        const maxStartupMillis = config?.maxStartupMillis ?? 5000;
 
         const devnetProcess = spawnChildProcess(command, args, {
             detached: true,
-            stdio: [undefined, config.stdout || "inherit", config.stderr || "inherit"],
+            stdio: [
+                undefined,
+                endpoint.shouldReadUrlFromStdout ? "pipe" : config.stdout || "inherit",
+                config.stderr || "inherit",
+            ],
         });
         devnetProcess.unref();
 
-        const devnetInstance = new Devnet(devnetProcess, new DevnetProvider({ url: devnetUrl }));
-
-        if (!config.keepAlive) {
-            // store it now to ensure it's cleaned up automatically if the remaining steps fail
-            Devnet.instances.push(devnetInstance);
-            if (!Devnet.CLEANUP_REGISTERED) {
-                Devnet.registerCleanup();
-            }
-        }
-
         return new Promise((resolve, reject) => {
-            const maxStartupMillis = config?.maxStartupMillis ?? 5000;
-            devnetInstance.ensureAlive(maxStartupMillis).then(() => resolve(devnetInstance));
+            let settled = false;
+
+            const fail = (err: unknown) => {
+                if (settled) {
+                    return;
+                }
+
+                settled = true;
+                if (!config.keepAlive && !devnetProcess.killed) {
+                    devnetProcess.kill();
+                }
+
+                reject(err);
+            };
+
+            const devnetUrlPromise = endpoint.shouldReadUrlFromStdout
+                ? readDevnetUrlFromStdout(devnetProcess, config.stdout, maxStartupMillis)
+                : Promise.resolve(endpoint.url);
+
+            devnetUrlPromise
+                .then((devnetUrl) => {
+                    const devnetInstance = new Devnet(
+                        devnetProcess,
+                        new DevnetProvider({ url: devnetUrl }),
+                    );
+
+                    if (!config.keepAlive) {
+                        // store it now to ensure it's cleaned up automatically if the remaining steps fail
+                        Devnet.instances.push(devnetInstance);
+                        if (!Devnet.CLEANUP_REGISTERED) {
+                            Devnet.registerCleanup();
+                        }
+                    }
+
+                    return devnetInstance.ensureAlive(maxStartupMillis).then(() => {
+                        settled = true;
+                        resolve(devnetInstance);
+                    });
+                })
+                .catch(fail);
 
             devnetProcess.on("error", function (e) {
-                reject(e);
+                fail(e);
             });
 
             devnetProcess.on("exit", function () {
                 if (devnetProcess.exitCode) {
-                    reject(`Devnet exited with code ${devnetProcess.exitCode}. \
+                    fail(`Devnet exited with code ${devnetProcess.exitCode}. \
 Check Devnet's logged output for more info. \
 The output location is configurable via the config object passed to the Devnet spawning method.`);
                 }

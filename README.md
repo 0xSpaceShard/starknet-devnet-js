@@ -28,7 +28,7 @@ To enable the use of `DevnetProvider` in browser, you need to configure sources 
 
 ## Spawn a new Devnet
 
-This library allows you to spawn a Devnet instance inside your program, without a separate terminal. It finds a random free port, and releases all used resources on exit. You can specify a port of your choice via `args: ["--port", ...]`.
+This library allows you to spawn a Devnet instance inside your program, without a separate terminal. If you do not specify a port, it lets Devnet bind to an OS-assigned port and reads the selected port from Devnet's startup output. It also releases all used resources on exit. You can specify a port of your choice via `args: ["--port", ...]`.
 
 ### Spawn a version without manual installation
 
